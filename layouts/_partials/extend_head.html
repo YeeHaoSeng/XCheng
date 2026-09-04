@@ -1,0 +1,102 @@
+<script>
+document.addEventListener('DOMContentLoaded',function(){var imgs=['/img/wswx3.jpg','/img/cs.jpg'];var d=document.createElement('div');d.className='home-bg';var i=document.createElement('img');i.src=imgs[Math.floor(Math.random()*imgs.length)];d.appendChild(i);document.body.insertBefore(d,document.body.firstChild);if(document.querySelector('.profile')){document.body.classList.add('is-homepage')}});
+</script>
+{{- if (eq .Layout "search") }}
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
+<style>
+.search-result { margin: 1em 0; padding: 0.8em; border-radius: 6px; background: var(--entry); }
+.search-result a { font-size: 1.1em; }
+.search-result .snippet { color: var(--secondary); font-size: 0.9em; margin-top: 0.3em; line-height: 1.5; max-height: 7em; overflow: hidden; }
+.search-result .snippet em { font-style: normal; background: #ffe58f; color: #000; padding: 0 2px; border-radius: 2px; }
+</style>
+<script defer>
+(function() {
+    var origAdd = window.addEventListener;
+    var captured = [];
+    window.addEventListener = function(type, fn) {
+        if (type === 'load') { captured.push(fn); return; }
+        origAdd.call(window, type, fn);
+    };
+    origAdd.call(window, 'DOMContentLoaded', function() {
+        captured = [];
+        window.addEventListener = origAdd;
+        origAdd.call(window, 'load', async function() {
+            var input = document.getElementById('searchInput');
+            var results = document.getElementById('searchResults');
+            if (!input || !results) return;
+            input.disabled = false;
+            input.placeholder = 'Input keywords...';
+            try {
+                var resp = await fetch('/index.json');
+                var data = await resp.json();
+                var fuse = new Fuse(data, {
+                    keys: ['title','content','summary'],
+                    threshold: 0.4,
+                    ignoreLocation: true,
+                    minMatchCharLength: 2
+                });
+                function strip(html) {
+                    var d = document.createElement('div');
+                    d.innerHTML = html;
+                    return d.textContent || '';
+                }
+                function escapeRx(s) {
+                    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&amp;'.substring(0,2));
+                }
+                function snippet(content, query) {
+                    if (!content) return '';
+                    var p = strip(content);
+                    var re = new RegExp(escapeRx(query), 'i');
+                    var m = p.match(re);
+                    if (!m) return p.substring(0, 150) + (p.length > 150 ? '...' : '');
+                    var pos = m.index;
+                    var s = Math.max(0, pos - 40);
+                    var e = Math.min(p.length, pos + query.length + 60);
+                    var snip = p.substring(s, e);
+                    if (s > 0) snip = '...' + snip;
+                    if (e < p.length) snip += '...';
+                    var hiRe = new RegExp('(' + escapeRx(query) + ')', 'gi');
+                    return snip.replace(hiRe, '<em>$1</em>');
+                }
+                input.addEventListener('input', function() {
+                    var q = this.value.trim();
+                    results.innerHTML = '';
+                    if (!q || q.length < 2) return;
+                    var hits = fuse.search(q, { limit: 8 });
+                    if (!hits.length) {
+                        results.innerHTML = '<li class="search-result" style="text-align:center;color:var(--secondary)">No results</li>';
+                        return;
+                    }
+                    hits.forEach(function(h) {
+                        var li = document.createElement('li');
+                        li.className = 'search-result';
+                        li.innerHTML = '<a href="' + h.item.permalink + '"><strong>' + h.item.title + '</strong></a>' +
+                            '<div class="snippet">' + snippet(h.item.content, q) + '</div>';
+                        results.appendChild(li);
+                    });
+                });
+            } catch(e) { console.error(e); }
+        });
+    });
+})();
+</script>
+{{- end }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var overlay = document.createElement('div');
+    overlay.className = 'lightbox-overlay';
+    var img = document.createElement('img');
+    overlay.appendChild(img);
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', function() { overlay.classList.remove('active'); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') overlay.classList.remove('active'); });
+    document.querySelectorAll('.post-content img').forEach(function(el) {
+        el.style.cursor = 'zoom-in';
+        el.addEventListener('click', function(e) {
+            e.preventDefault();
+            img.src = el.src;
+            overlay.classList.add('active');
+        });
+    });
+});
+</script>

@@ -1,0 +1,131 @@
+/* === HuangShiWuYu Responsive Styles === */
+
+/* Vertical poetry sections */
+.verse-section {
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    min-height: 200px;
+    font-weight: bold;
+    padding: 0;
+    box-sizing: border-box;
+}
+.verse-section .verse-text {
+    font-family: STXingkai, "华文行楷", "KaiTi", serif;
+    writing-mode: vertical-rl;
+    font-size: 22px;
+    line-height: 1.8;
+}
+.verse-section.verse-left {
+    text-align: left;
+}
+.verse-section.verse-right {
+    text-align: right;
+    padding-right: 50px;
+}
+.verse-section.verse-indent {
+    padding-left: 30%;
+}
+
+/* Red emphasized quotes */
+.quote-red {
+    text-align: left;
+    font-size: 18px;
+    font-weight: bold;
+    color: #a30000;
+    font-family: STFangsong, "仿宋", "FangSong", serif;
+    margin: 0.5em 0;
+}
+.quote-red.quote-lg {
+    font-size: 20px;
+}
+.quote-red.quote-xl {
+    font-size: 22px;
+}
+.quote-darkred {
+    color: #800000;
+    font-family: STFangsong, "方正舒体", serif;
+}
+
+/* Gold/Kaishu sections */
+.gold-section {
+    text-align: center;
+    line-height: 2em;
+    color: #FFD700;
+    font-family: STKaiti, "楷书", "KaiTi", serif;
+    font-size: 15px;
+    margin: 1em 0;
+}
+
+/* Chapter title */
+.chapter-title {
+    text-align: center;
+    font-size: 24px;
+    writing-mode: vertical-rl;
+    font-weight: bold;
+    font-family: STLiti, "隶书", "LiSu", serif;
+    padding-left: 30%;
+    margin: 2em auto;
+}
+
+/* END section */
+.end-section {
+    text-align: center;
+    font-weight: bold;
+    font-family: "Times New Roman", serif;
+    font-size: 20px;
+    margin: 3em 0 2em;
+    color: var(--primary);
+}
+
+/* Postscript */
+.postscript {
+    text-align: right;
+    font-family: STFangsong, "仿宋", "FangSong", serif;
+    font-size: 12px;
+    margin: 2em 0;
+    line-height: 1.6;
+}
+
+/* Responsive images */
+.post-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1.5em auto;
+}
+
+/* Mobile overrides */
+@media screen and (max-width: 768px) {
+    .verse-section {
+        max-width: 100%;
+        min-height: auto;
+    }
+    .verse-section .verse-text {
+        font-size: 18px;
+    }
+    .verse-section.verse-right {
+        padding-right: 10px;
+    }
+    .verse-section.verse-indent {
+        padding-left: 10%;
+    }
+    .chapter-title {
+        font-size: 20px;
+        padding-left: 10%;
+    }
+    .quote-red {
+        font-size: 16px;
+    }
+    .quote-red.quote-lg {
+        font-size: 17px;
+    }
+    .quote-red.quote-xl {
+        font-size: 18px;
+    }
+    .postscript {
+        font-size: 11px;
+    }
+}

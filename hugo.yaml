@@ -1,0 +1,56 @@
+baseURL: "http://localhost:1313/"
+title: "XCheng"
+theme: "PaperMod"
+
+enableRobotsTXT: true
+enableEmoji: true
+paginate: 5
+summaryLength: 15
+
+outputs:
+  home:
+    - HTML
+    - JSON
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    style: monokai
+    noClasses: false
+
+menu:
+  main:
+    - identifier: posts
+      name: 文章
+      url: /posts/
+      weight: 1
+    - identifier: archives
+      name: 归档
+      url: /archives/
+      weight: 2
+    - identifier: search
+      name: 搜索
+      url: /search/
+      weight: 3
+    - identifier: tags
+      name: 标签
+      url: /tags/
+      weight: 4
+
+params:
+  profileMode:
+    enabled: true
+    imageUrl: "/img/wswx3.jpg"
+    imageTitle: ""
+  socialIcons:
+    - name: github
+      url: "https://github.com/"
+  defaultTheme: auto
+  ShowReadingTime: true
+  ShowWordCount: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  ShowPostNavLinks: true
+  ShowToc: true

@@ -1,0 +1,25 @@
+{{- $posts := where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{- $totalPosts := len $posts }}
+{{- $totalWords := 0 }}
+{{- $firstYear := now.Year }}
+{{- range $posts }}
+  {{- $totalWords = add $totalWords .WordCount }}
+{{- end }}
+{{- range (sort $posts "Date" "asc") }}
+  {{- if gt .Date.Year 1000 }}
+    {{- $firstYear = .Date.Year }}
+    {{- break }}
+  {{- end }}
+{{- end }}
+{{- $currentYear := now.Year }}
+{{- $yearStr := printf "%d - %d" $firstYear $currentYear }}
+{{- if eq $firstYear $currentYear }}
+  {{- $yearStr = printf "%d" $currentYear }}
+{{- end }}
+{{- $foot := printf "%s &#183; &#20849; %d &#31687;&#25991;&#31456; &#183; &#24635;&#35745; %d &#23383;" $yearStr $totalPosts $totalWords }}
+<footer class="footer">
+    <span>{{ $foot | safeHTML }} &middot; PV <span id="pv">0</span> &middot; UV <span id="uv">0</span></span>
+</footer>
+<script>
+(function(){var p=localStorage.getItem('site_pv')||0;p++;localStorage.setItem('site_pv',p);document.getElementById('pv').textContent=p;var uv=localStorage.getItem('site_uv')||0;if(!localStorage.getItem('site_visited')){uv++;localStorage.setItem('site_visited','1');localStorage.setItem('site_uv',uv);}document.getElementById('uv').textContent=uv;})();
+</script>

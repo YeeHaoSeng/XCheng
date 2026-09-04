@@ -1,0 +1,119 @@
+/* Background layer for all pages */
+.home-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+}
+.home-bg img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+}
+
+/* Non-homepage: 30% opacity bg */
+.home-bg {
+    opacity: 0.3;
+}
+
+/* Homepage: full opacity */
+.is-homepage .home-bg {
+    opacity: 1;
+}
+
+/* Homepage: all containers transparent */
+.is-homepage,
+.is-homepage * {
+    background-color: transparent !important;
+}
+.is-homepage .main,
+.is-homepage .header,
+.is-homepage nav,
+.is-homepage #menu,
+.is-homepage .profile,
+.is-homepage .post-entry {
+    background: transparent !important;
+}
+
+/* Homepage text: bold pure white */
+.is-homepage,
+.is-homepage * {
+    color: #fff !important;
+}
+.is-homepage * {
+    font-weight: 600 !important;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+.is-homepage svg {
+    color: #fff !important;
+}
+
+/* Profile: no card frame, GitHub icon bottom-right */
+.profile {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    min-height: 60vh;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+.profile img {
+    display: none;
+}
+.profile .social-icons {
+    padding: 8px 12px;
+}
+.profile .social-icons a {
+    background: rgba(255,255,255,0.7);
+    border-radius: 50%;
+    padding: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+[data-theme="dark"] .profile .social-icons a {
+    background: rgba(30,30,30,0.7);
+}
+
+/* White card background for content area */
+.post-content,
+.page-header,
+.terms-tags {
+    background: var(--theme);
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.archive-year {
+    background: transparent;
+}
+
+/* Ensure article cards also have background */
+.post-entry {
+    background: var(--theme);
+    border-radius: 8px;
+    padding: 1.2rem;
+}
+
+/* Footer stats card */
+.extend_footer .footer {
+    background: var(--theme);
+}
+
+/* Dark mode override - keep dark theme colors */
+:root {
+    --card-bg: #ffffff;
+}
+[data-theme="dark"] {
+    --card-bg: #1d1e20;
+}
+
+/* Content area width */
+.main {
+    max-width: 900px;
+}
+
+@media screen and (max-width: 960px) {
+    .main {
+        max-width: calc(100% - 2rem);
+    }
+}

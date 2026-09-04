@@ -1,0 +1,15 @@
+/* Mobile fix for post inline styles */
+@media screen and (max-width: 768px) {
+  .post-content div[style*="width"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    height: auto !important;
+    box-sizing: border-box;
+  }
+  .post-content img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}

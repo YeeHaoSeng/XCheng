@@ -1,0 +1,101 @@
+{{- define "main" }}
+
+<article class="post-single">
+  <header class="post-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1 class="post-title entry-hint-parent">
+      {{ .Title }}
+      {{- if .Draft }}
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" fill="currentColor">
+          <path d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+      {{- end }}
+    </h1>
+    {{- if .Description }}
+    <div class="post-description">
+      {{ .Description }}
+    </div>
+    {{- end }}
+    {{- if not (.Param "hideMeta") }}
+    <div class="post-meta">
+      {{- partial "post_meta.html" . -}}
+      {{- partial "translation_list.html" . -}}
+      {{- partial "edit_post.html" . -}}
+      {{- partial "post_canonical.html" . -}}
+    </div>
+    {{- end }}
+  </header>
+  {{- $isHidden := (.Param "cover.hiddenInSingle") | default (.Param "cover.hidden") | default false }}
+  {{- partial "cover.html" (dict "cxt" . "IsSingle" true "isHidden" $isHidden) }}
+  {{- if (.Param "ShowToc") }}
+  {{- partial "toc.html" . }}
+  {{- end }}
+
+  {{- if .Content }}
+  <div class="post-content md-content">
+    {{- if not (.Param "disableAnchoredHeadings") }}
+    {{- partial "anchored_headings.html" .Content -}}
+    {{- else }}{{ .Content }}{{ end }}
+  </div>
+  {{- end }}
+
+  {{- partial "extend_post_content.html" . }}
+
+  <footer class="post-footer">
+    {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
+    <ul class="post-tags">
+      {{- range ($.GetTerms $tags) }}
+      <li><a href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>
+      {{- end }}
+    </ul>
+    {{- if (.Param "ShowPostNavLinks") }}
+    {{- partial "post_nav_links.html" . }}
+    {{- end }}
+    {{- if (and site.Params.ShowShareButtons (ne .Params.disableShare true)) }}
+    {{- partial "share_icons.html" . -}}
+    {{- end }}
+  </footer>
+
+  {{- if (.Param "comments") }}
+  {{- partial "comments.html" . }}
+  {{- end }}
+</article>
+
+{{- if .Params.password }}
+<style>
+.pw-gate { text-align:center; padding:3rem 1rem; }
+.pw-gate input { padding:0.5em 1em; font-size:1em; border:1px solid var(--border); border-radius:4px; background:var(--entry); color:var(--primary); width:200px; }
+.pw-gate button { padding:0.5em 1.2em; font-size:1em; margin-left:0.5em; cursor:pointer; border:none; border-radius:4px; background:var(--primary); color:var(--theme); }
+.pw-gate .pw-error { color:#c00; margin-top:0.5em; display:none; }
+</style>
+<div class="pw-gate" id="pwGate">
+    <p style="color:var(--secondary);margin-bottom:0.8em;">This article is password protected</p>
+    <input type="password" id="pwInput" placeholder="Input password" /> <button id="pwBtn">Confirm</button>
+    <div class="pw-error" id="pwError">Wrong password</div>
+</div>
+<script>
+(function(){
+    var pw = '{{ .Params.password }}';
+    var gate = document.getElementById('pwGate');
+    var content = document.querySelector('.post-content');
+    var error = document.getElementById('pwError');
+    if (!gate || !content) return;
+    content.style.display = 'none';
+    document.getElementById('pwBtn').onclick = function() {
+        if (document.getElementById('pwInput').value === pw) {
+            gate.style.display = 'none';
+            content.style.display = '';
+        } else {
+            error.style.display = 'block';
+        }
+    };
+    document.getElementById('pwInput').onkeydown = function(e) {
+        if (e.key === 'Enter') document.getElementById('pwBtn').click();
+    };
+})();
+</script>
+{{- end }}
+
+{{- end }}{{/* end main */}}
