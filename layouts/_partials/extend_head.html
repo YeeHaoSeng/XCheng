@@ -27,7 +27,8 @@ document.addEventListener('DOMContentLoaded',function(){if(document.querySelecto
             input.disabled = false;
             input.placeholder = 'Input keywords...';
             try {
-                var resp = await fetch('/index.json');
+                var SEARCH_INDEX_URL = '{{ site.BaseURL }}index.json';
+                var resp = await fetch(SEARCH_INDEX_URL);
                 var data = await resp.json();
                 var fuse = new Fuse(data, {
                     keys: ['title','content','summary'],
