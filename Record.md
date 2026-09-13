@@ -260,3 +260,58 @@ $sha = [Security.Cryptography.SHA256]::Create()
 - 引用处：`layouts/archives.html`（全站文章）、`layouts/_default/term.html`（当前标签文章）
 - 参考：hugo-book 侧栏树 / Obsidian 树状归档 / Hexo NexT 侧栏分类
 - 非文章页（首页/列表/归档/搜索/标签）不加载任何阅读器组件
+
+---
+
+## 新建文章流程（本地写，推荐）
+
+### 1. 新建
+
+```bash
+hugo new posts/我的文章.md        # 文件名会成为文章路径，可中文
+```
+
+模板 `archetypes/default.md` 已默认：日期 ISO8601、`draft: false`（新建即发布）、`tags: []`。
+
+### 2. 写正文
+
+frontmatter 示例：
+
+```yaml
+---
+title: "我的文章"
+date: 2026-09-13T21:00:00+08:00
+cover:
+  image: /img/xxx.jpg          # 可选封面
+tags: []                        # 想加密改为 ["private"]
+---
+正文 markdown
+```
+
+- 图片：文件放 `static/img/...`，正文用 `/img/...` 引用；**静态文件不自动入库**，`git add -A` 会一并带上
+- 加密：tags 加 `private` 即可，密码统一在 `hugo.yaml` 的 `params.privateTags` 中管理（不要用旧 frontmatter `password` 字段）
+
+### 3. 本地预览
+
+```bash
+hugo server --baseURL http://localhost:1313/   # 1313 常驻进程；直接开 http://localhost:1313/
+```
+
+加密文章预览：打开文章页输入密码 `hugoxc`。
+
+### 4. 一键上传（发布）
+
+两种方式任选：
+
+```bash
+git ship "add post xxx"     # 方案 A：git 全局别名（已装）；不带消息自动用 "update: 日期"
+```
+
+双击 `push.cmd`（方案 B，Windows，支持参数：`push.cmd "add post xxx"`）。
+
+两者内部都是 `add -A + commit + pull --rebase + push`，随后 GitHub Actions 自动重部署，约 1 分钟上线。
+
+### 5. 要点
+
+- 每次 push 后远端可能有网页端提交（如「编辑本文」），`ship`/`push.cmd` 已内置 `pull --rebase`，无需手动拉取
+- 纯网页端新建：仓库 `content/posts` → Add file；或按 `.` 进 github.dev
