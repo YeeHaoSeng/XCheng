@@ -55,7 +55,7 @@ params:
     private: "hugoxc"
   comments: true
   waline:
-    serverURL: ""   # 部署 Waline 后填入，如 "https://xxx.vercel.app"；留空则评论框不显示
+    serverURL: "https://vercelproj-xc-heng.vercel.app"
   ShowReadingTime: true
   ShowWordCount: true
   ShowBreadCrumbs: true
