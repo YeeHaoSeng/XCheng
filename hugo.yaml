@@ -53,6 +53,9 @@ params:
     appendFilePath: true
   privateTags:
     private: "hugoxc"
+  comments: true
+  waline:
+    serverURL: ""   # 部署 Waline 后填入，如 "https://xxx.vercel.app"；留空则评论框不显示
   ShowReadingTime: true
   ShowWordCount: true
   ShowBreadCrumbs: true
