@@ -1,4 +1,5 @@
 {{- define "main" }}
+{{- $pw := partial "priv_pw.html" . }}
 
 <article class="post-single">
   <header class="post-header">
@@ -29,7 +30,7 @@
   </header>
   {{- $isHidden := (.Param "cover.hiddenInSingle") | default (.Param "cover.hidden") | default false }}
   {{- partial "cover.html" (dict "cxt" . "IsSingle" true "isHidden" $isHidden) }}
-  {{- if and (.Param "ShowToc") (not .Params.password) }}
+  {{- if and (.Param "ShowToc") (not $pw) }}
   {{- if strings.Contains .TableOfContents "<ul>" }}
   {{- partial "reader_toc.html" . }}
   <div class="toc-inline">{{- partial "toc.html" . }}</div>
@@ -68,7 +69,7 @@
   {{- end }}
 </article>
 
-{{- if .Params.password }}
+{{- if $pw }}
 <style>
 .pw-gate { text-align:center; padding:3rem 1rem; }
 .pw-gate input { padding:0.5em 1em; font-size:1em; border:1px solid var(--border); border-radius:4px; background:var(--entry); color:var(--primary); width:200px; }
@@ -82,7 +83,7 @@
 </div>
 <script>
 (function(){
-    var pw = '{{ .Params.password }}';
+    var pw = '{{ $pw }}';
     var gate = document.getElementById('pwGate');
     var content = document.querySelector('.post-content');
     var error = document.getElementById('pwError');

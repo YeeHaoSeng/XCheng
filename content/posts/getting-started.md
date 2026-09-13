@@ -2,8 +2,7 @@
 title: "Hugo 快速入门"
 date: 2026-07-25T10:00:00+08:00
 draft: false
-password: "hugoxc"
-tags: ["Hugo", "教程"]
+tags: ["Hugo", "教程", "private"]
 ---
 
 ## 什么是 Hugo？

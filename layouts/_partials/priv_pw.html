@@ -1,0 +1,13 @@
+{{- /* Effective password for a page:
+       tag-driven first (site.Params.privateTags map), then the legacy
+       frontmatter `password` field. Returns "" when the page is public. */ -}}
+{{- $pw := "" }}
+{{- range .Params.tags }}
+{{- with index site.Params.privateTags . }}
+{{- $pw = . }}
+{{- end }}
+{{- end }}
+{{- if and (not $pw) .Params.password }}
+{{- $pw = .Params.password }}
+{{- end }}
+{{- return $pw }}

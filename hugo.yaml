@@ -51,6 +51,8 @@ params:
   editPost:
     URL: "https://github.com/YeeHaoSeng/XCheng/edit/master/content"
     appendFilePath: true
+  privateTags:
+    private: "hugoxc"
   ShowReadingTime: true
   ShowWordCount: true
   ShowBreadCrumbs: true
