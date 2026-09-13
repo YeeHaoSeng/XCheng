@@ -1,22 +1,16 @@
 {{- /* Waline comments: guest-comment support, no login required.
-       Hidden until params.waline.serverURL is configured. */ -}}
+       Hidden until params.waline.serverURL is configured.
+       Waline v3 is ESM-only: it must be imported, not <script src>'d. */ -}}
 {{- if and site.Params.comments site.Params.waline.serverURL }}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@waline/client@3.15.2/dist/waline.css">
 <div id="waline"></div>
-<script>
-(function () {
-    var s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.js';
-    s.onload = function () {
-        if (!window.Waline) return;
-        Waline.init({
-            el: '#waline',
-            serverURL: '{{ site.Params.waline.serverURL }}',
-            dark: 'html[data-theme="dark"]', /* covers the dark-green eye-care mode too */
-            lang: 'zh-CN'
-        });
-    };
-    document.head.appendChild(s);
-})();
+<script type="module">
+import { init } from 'https://cdn.jsdelivr.net/npm/@waline/client@3.15.2/dist/waline.js';
+init({
+    el: '#waline',
+    serverURL: '{{ site.Params.waline.serverURL }}',
+    dark: 'html[data-theme="dark"]', /* covers the dark-green eye-care mode too */
+    lang: 'zh-CN'
+});
 </script>
 {{- end }}
