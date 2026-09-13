@@ -1,5 +1,8 @@
 {{- define "main" }}
 
+{{- $pages := .Pages }}
+{{- partial "archive_tree.html" (dict "pages" $pages) }}
+
 <header class="page-header">
   <h1>{{ .Title }}</h1>
   {{- if .Description }}
@@ -9,7 +12,6 @@
   {{- end }}
 </header>
 
-{{- $pages := .Pages }}
 {{- $count := len $pages }}
 {{- $words := 0 }}
 {{- range $pages }}

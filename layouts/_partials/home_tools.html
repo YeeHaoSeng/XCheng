@@ -1,0 +1,107 @@
+{{- /* Homepage settings panel: theme (site-wide) + bubble style.
+       Same visual language as the article reader panel (reuses its CSS
+       classes); typography rows are article-only so they stay out. */ -}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var root = document.documentElement;
+    var LS = window.localStorage;
+    var state = { theme: LS.getItem('reader_theme') || (root.dataset.theme === 'dark' ? 'dark' : 'light') };
+
+    var fab = document.createElement('button');
+    fab.type = 'button';
+    fab.className = 'reader-fab home-tools-fab';
+    fab.title = '设置';
+    fab.setAttribute('aria-label', '设置');
+    fab.textContent = 'Aa';
+
+    function row(label, control) {
+        return '<div class="reader-row"><span class="reader-label">' + label + '</span>' + control + '</div>';
+    }
+    function seg(key, opts) {
+        var html = '<div class="reader-seg" data-seg="' + key + '">';
+        opts.forEach(function (o) {
+            html += '<button type="button" data-seg-key="' + key + '" data-seg-val="' + o[0] + '">' + o[1] + '</button>';
+        });
+        return html + '</div>';
+    }
+
+    var panel = document.createElement('div');
+    panel.className = 'reader-panel home-tools-panel';
+    panel.innerHTML =
+        row('气泡', seg('bubble', [['refined', '精致'], ['original', '原味']])) +
+        row('主题', seg('theme', [['light', '日间'], ['sepia', '护眼'], ['dark', '夜间']]));
+
+    document.body.appendChild(fab);
+    document.body.appendChild(panel);
+
+    function sync() {
+        var bubble = 'refined';
+        try { bubble = LS.getItem('bubble_mode') || 'refined'; } catch (e) { }
+        ['bubble', 'theme'].forEach(function (k) {
+            var group = panel.querySelector('[data-seg="' + k + '"]');
+            if (!group) return;
+            Array.prototype.forEach.call(group.children, function (b) {
+                var v = k === 'bubble' ? bubble : state.theme;
+                b.classList.toggle('active', b.getAttribute('data-seg-val') === v);
+            });
+        });
+    }
+
+    function applyTheme(value) {
+        state.theme = value;
+        if (value === 'sepia') {
+            /* Kindle-style dark-green eye care: a dark mode. The photo hero
+               homepage keeps its own colors, so only persist the preference
+               here — the article reader applies data-reader-theme when you
+               navigate. */
+            LS.setItem('pref-theme', 'dark');
+        } else {
+            root.removeAttribute('data-reader-theme');
+            root.dataset.theme = value;
+            LS.setItem('pref-theme', value);
+        }
+        LS.setItem('reader_theme', value);
+        sync();
+    }
+
+    panel.addEventListener('click', function (e) {
+        var t = e.target;
+        if (!t.matches('[data-seg-key]')) return;
+        var key = t.getAttribute('data-seg-key');
+        var val = t.getAttribute('data-seg-val');
+        if (key === 'theme') { applyTheme(val); return; }
+        try { LS.setItem('bubble_mode', val); } catch (err) { }
+        if (window.__bubbleSetMode) window.__bubbleSetMode(val);
+        sync();
+    });
+
+    fab.addEventListener('click', function (e) {
+        e.stopPropagation();
+        panel.classList.toggle('open');
+    });
+    document.addEventListener('click', function (e) {
+        if (panel.classList.contains('open') && !panel.contains(e.target) && !fab.contains(e.target)) {
+            panel.classList.remove('open');
+        }
+    });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && panel.classList.contains('open')) panel.classList.remove('open');
+    });
+
+    /* header sun/moon toggle takes back control from sepia and stays in sync */
+    var tt = document.getElementById('theme-toggle');
+    if (tt) {
+        tt.addEventListener('click', function () {
+            if (root.hasAttribute('data-reader-theme')) {
+                root.removeAttribute('data-reader-theme');
+            }
+            state.theme = root.dataset.theme === 'dark' ? 'dark' : 'light';
+            try { LS.setItem('reader_theme', state.theme); } catch (e) { }
+            sync();
+        });
+    }
+
+    if (state.theme === 'sepia') applyTheme('sepia');
+    sync();
+});
+</script>

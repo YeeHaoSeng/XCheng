@@ -1,5 +1,5 @@
 <script>
-document.addEventListener('DOMContentLoaded',function(){var imgs=['/img/wswx3.jpg','/img/cs.jpg'];var d=document.createElement('div');d.className='home-bg';var i=document.createElement('img');i.src=imgs[Math.floor(Math.random()*imgs.length)];d.appendChild(i);document.body.insertBefore(d,document.body.firstChild);if(document.querySelector('.profile')){document.body.classList.add('is-homepage')}});
+document.addEventListener('DOMContentLoaded',function(){if(document.querySelector('.profile')){var imgs=['/img/wswx3.jpg','/img/cs.jpg'];var d=document.createElement('div');d.className='home-bg';var i=document.createElement('img');i.src=imgs[Math.floor(Math.random()*imgs.length)];d.appendChild(i);document.body.insertBefore(d,document.body.firstChild);document.body.classList.add('is-homepage')}});
 </script>
 {{- if (eq .Layout "search") }}
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
@@ -100,3 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+{{- /* Reader experience: article pages only, skipped for password-protected posts */ -}}
+{{- if and (eq .Kind "page") (ne .Layout "archives") (ne .Layout "search") (not .Params.password) }}
+{{- partial "reader_tools.html" . }}
+{{- end }}

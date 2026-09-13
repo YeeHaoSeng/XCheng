@@ -1,23 +1,40 @@
-/* Background layer for all pages */
+/* ==========================================================================
+   Background layer: photo hero is homepage-only.
+   Content pages keep a pure theme-color background for clean reading
+   (the reading-first approach of hugo-paper / bearblog-style themes).
+   ========================================================================== */
+
 .home-bg {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
     z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
 }
 .home-bg img {
     width: 100%; height: 100%;
     object-fit: cover;
+    transform: scale(1.02);
 }
 
-/* Non-homepage: 30% opacity bg */
-.home-bg {
-    opacity: 0.3;
+/* Content pages never render the photo layer */
+body:not(.is-homepage) .home-bg {
+    display: none;
 }
 
-/* Homepage: full opacity */
+/* Homepage hero: full-opacity photo with a soft vignette so the bold
+   white type stays legible at the edges */
 .is-homepage .home-bg {
     opacity: 1;
+}
+.is-homepage .home-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, transparent 22%, transparent 78%, rgba(0, 0, 0, 0.45) 100%),
+        radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.30) 100%);
 }
 
 /* Homepage: all containers transparent */
@@ -109,7 +126,7 @@
 
 /* Content area width */
 .main {
-    max-width: 900px;
+    max-width: 980px;
 }
 
 @media screen and (max-width: 960px) {

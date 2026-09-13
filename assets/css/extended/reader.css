@@ -1,0 +1,423 @@
+/* ==========================================================================
+   Reader layer — ebook-style typography, chapter sidebar, progress & panel
+   Loaded last (alphabetical order in assets/css/extended/*.css), so it
+   intentionally wins over the earlier extended files where they overlap.
+   ========================================================================== */
+
+:root {
+    --font-serif: "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC", "STSong",
+        "SimSun", Georgia, "Times New Roman", serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+
+    /* Reader tunables (overridden per-visitor by JS / localStorage) */
+    --reader-font-size: 18px;
+    --reader-line-height: 1.9;
+    --reader-measure: 860px;
+    --reader-font: var(--font-serif);
+}
+
+/* ---------------------------------------------------------------- article */
+
+.post-single .post-header {
+    max-width: calc(var(--reader-measure) + 4rem);
+    margin-inline: auto;
+}
+
+.post-single .post-content {
+    max-width: calc(var(--reader-measure) + 4rem);
+    margin: 30px auto;
+    font-family: var(--reader-font);
+    font-size: var(--reader-font-size);
+    line-height: var(--reader-line-height);
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+.post-single .post-content p {
+    margin-bottom: 0.85em;
+    text-align: justify;
+    text-justify: inter-ideograph;
+}
+
+.post-single .post-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Opt-in first-line indent (classic Chinese book setting) */
+:root[data-reader-indent="on"] .post-single .post-content p {
+    text-indent: 2em;
+}
+
+:root[data-reader-indent="on"] .post-single .post-content li p,
+:root[data-reader-indent="on"] .post-single .post-content blockquote p,
+:root[data-reader-indent="on"] .post-single .post-content .verse-section p,
+:root[data-reader-indent="on"] .post-single .post-content figure p {
+    text-indent: 0;
+}
+
+.post-single .post-content :is(h1, h2, h3, h4, h5, h6) {
+    scroll-margin-top: 1.5rem;
+    font-family: var(--font-serif);
+    letter-spacing: 0.01em;
+}
+
+.post-single .post-content h1 {
+    font-size: 1.8em;
+    margin: 1.8em auto 0.9em;
+}
+
+.post-single .post-content h2 {
+    font-size: 1.45em;
+    margin: 2em auto 0.8em;
+    padding-bottom: 0.35em;
+    border-bottom: 1px solid var(--border);
+}
+
+.post-single .post-content h3 {
+    font-size: 1.2em;
+    margin: 1.6em auto 0.6em;
+}
+
+.post-single .post-content h4,
+.post-single .post-content h5,
+.post-single .post-content h6 {
+    font-size: 1.05em;
+    margin: 1.4em auto 0.5em;
+}
+
+.post-single .post-content a:not(.anchor) {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+    text-decoration-color: var(--tertiary);
+}
+
+.post-single .post-content a:not(.anchor):hover {
+    text-decoration-color: var(--primary);
+}
+
+.post-single .post-content blockquote {
+    margin: 1.4em 0;
+    padding: 0.85em 1.2em;
+    border-inline-start: 3px solid var(--primary);
+    background: var(--code-bg);
+    border-radius: 0 6px 6px 0;
+    color: var(--secondary);
+}
+
+.post-single .post-content blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+.post-single .post-content hr {
+    width: 40%;
+    height: 1px;
+    margin: 2.5em auto;
+    background: var(--tertiary);
+    border: 0;
+}
+
+.post-single .post-content img {
+    border-radius: 6px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.post-single .post-content table th {
+    background: var(--code-bg);
+}
+
+.post-single .post-content tbody tr:nth-child(even) {
+    background: color-mix(in srgb, var(--code-bg) 55%, transparent);
+}
+
+.post-single .post-content code {
+    font-size: 0.85em;
+}
+
+.post-single .post-content .highlight,
+.post-single .post-content pre {
+    font-size: 0.88em;
+    line-height: 1.7;
+}
+
+.post-single .post-content ::selection {
+    background: color-mix(in srgb, var(--primary) 22%, transparent);
+}
+
+/* -------------------------------------------------------- reading progress */
+
+.reader-progress {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    width: 100%;
+    height: 3px;
+    z-index: 9998;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    background: var(--primary);
+    opacity: 0.85;
+    pointer-events: none;
+    transition: transform 0.1s linear;
+}
+
+/* ------------------------------------------------------- chapter sidebar */
+
+.reader-toc {
+    display: none;
+    position: fixed;
+    top: calc(var(--header-height) + 1.5rem);
+    left: calc(50% + 470px);
+    width: 220px;
+    max-height: calc(100vh - var(--header-height) - 5rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.reader-toc-head {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: var(--secondary);
+    margin-bottom: 0.6rem;
+    padding-left: 0.7rem;
+}
+
+.reader-toc-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.reader-toc-nav > nav > ul > li > ul {
+    padding-inline-start: 0.85rem;
+}
+
+.reader-toc-nav li {
+    margin: 0.1rem 0;
+}
+
+.reader-toc-nav a {
+    display: block;
+    padding: 0.28rem 0.7rem;
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: var(--secondary);
+    border-inline-start: 2px solid transparent;
+    border-radius: 0 4px 4px 0;
+}
+
+.reader-toc-nav a:hover {
+    color: var(--primary);
+    background: var(--code-bg);
+}
+
+.reader-toc-nav a.active {
+    color: var(--primary);
+    font-weight: 600;
+    border-inline-start-color: var(--primary);
+    background: var(--code-bg);
+}
+
+@media (min-width: 1440px) {
+    .reader-toc {
+        display: block;
+    }
+
+    /* The collapsible in-flow TOC is redundant once the sidebar is visible */
+    .toc-inline {
+        display: none;
+    }
+}
+
+/* --------------------------------------------------------- reader panel */
+
+.reader-fab {
+    position: fixed;
+    right: 2rem;
+    bottom: 7.5rem;
+    z-index: 9997;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border-radius: 64px;
+    border: none;
+    background: var(--tertiary);
+    color: var(--primary);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.reader-fab:hover {
+    color: var(--primary);
+    filter: brightness(0.96);
+}
+
+.reader-panel {
+    display: none;
+    position: fixed;
+    right: 2rem;
+    bottom: 10.5rem;
+    z-index: 9997;
+    width: 272px;
+    padding: 14px 16px;
+    background: var(--theme);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+}
+
+.reader-panel.open {
+    display: block;
+}
+
+.reader-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.reader-row:last-of-type {
+    margin-bottom: 0;
+}
+
+.reader-row > .reader-label {
+    flex: 0 0 4.5em;
+    color: var(--secondary);
+    font-size: 13px;
+}
+
+.reader-seg {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.reader-seg button {
+    padding: 4px 10px;
+    border: 0;
+    background: transparent;
+    color: var(--secondary);
+    font-size: 13px;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+.reader-seg button + button {
+    border-inline-start: 1px solid var(--border);
+}
+
+.reader-seg button:hover {
+    color: var(--primary);
+}
+
+.reader-seg button.active {
+    background: var(--primary);
+    color: var(--theme);
+}
+
+.reader-step {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.reader-step button {
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--primary);
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.reader-step button:hover {
+    background: var(--code-bg);
+}
+
+.reader-step .reader-val {
+    min-width: 2.4em;
+    text-align: center;
+    color: var(--primary);
+    font-size: 13px;
+}
+
+.reader-reset {
+    width: 100%;
+    margin-top: 12px;
+    padding: 6px 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--secondary);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.reader-reset:hover {
+    color: var(--primary);
+    background: var(--code-bg);
+}
+
+/* ------------------------------------------------------------ sepia mode */
+/* "sepia" is actually Kindle-style dark-green eye care: ink-green page with
+   pale green-tinted text. Treated as a dark mode (see the JS applyTheme). */
+:root[data-reader-theme="sepia"] {
+    --theme: #1e2a22;
+    --entry: #25342a;
+    --primary: #c9dcc5;
+    --secondary: #93a892;
+    --tertiary: #41523f;
+    --content: #b8ccb4;
+    --border: #2e4034;
+    --code-bg: #141c16;
+    --code-block-bg: #141c16;
+    color-scheme: dark;
+}
+
+:root[data-reader-theme="sepia"] body {
+    background: var(--theme);
+}
+
+/* ---------------------------------------------------------- small screens */
+
+@media screen and (max-width: 768px) {
+    .post-single .post-content {
+        font-family: var(--reader-font);
+        letter-spacing: 0;
+        text-align: start;
+    }
+
+    .post-single .post-content p {
+        text-align: start;
+    }
+
+    .reader-fab {
+        right: 1rem;
+        bottom: 7rem;
+    }
+
+    .reader-panel {
+        right: 1rem;
+        left: 1rem;
+        bottom: 10rem;
+        width: auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reader-progress {
+        transition: none;
+    }
+}

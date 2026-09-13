@@ -1,0 +1,58 @@
+{{- /* Year/posts tree sidebar, shared by archives and tag term pages.
+       Call with (dict "pages" $pages) so each page shows only its own posts.
+       Hidden below 1440px via archive-tree.css. */ -}}
+{{- $pages := .pages | default (where site.RegularPages "Type" "in" site.Params.mainSections) }}
+{{- $groups := $pages.GroupByPublishDate "2006" }}
+<aside class="archive-tree" id="archiveTree" aria-label="归档目录">
+    <div class="archive-tree-head">目录</div>
+    <nav class="archive-tree-nav">
+        <ul>
+        {{- range $groups }}
+            {{- $year := replace .Key "0001" "" }}
+            {{- if ne .Key "0001" }}
+            <li>
+                <a class="archive-tree-year-link" href="#{{ $year }}">{{ $year }}<sup>{{ len .Pages }}</sup></a>
+                <ul>
+                {{- range .Pages }}
+                {{- if eq .Kind "page" }}
+                    <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
+                {{- end }}
+                {{- end }}
+                </ul>
+            </li>
+            {{- end }}
+        {{- end }}
+        </ul>
+    </nav>
+</aside>
+<script>
+(function () {
+    var aside = document.getElementById('archiveTree');
+    if (!aside) return;
+    var links = Array.prototype.slice.call(aside.querySelectorAll('a[href^="#"]'));
+    if (!links.length) return;
+    var items = [];
+    links.forEach(function (a) {
+        var id = decodeURIComponent(a.getAttribute('href').slice(1));
+        var el = document.getElementById(id);
+        if (el) items.push({ a: a, el: el });
+    });
+    function spy() {
+        var pos = window.scrollY + 120;
+        var cur = null;
+        items.forEach(function (it) {
+            if (it.el.getBoundingClientRect().top + window.scrollY <= pos) cur = it.a;
+        });
+        links.forEach(function (a) { a.classList.toggle('active', a === cur); });
+    }
+    window.addEventListener('scroll', spy, { passive: true });
+    window.addEventListener('resize', spy);
+    spy();
+    /* rAF fallback: some environments swallow scroll events for programmatic scrolls */
+    var lastY = -1;
+    (function frame() {
+        if (window.scrollY !== lastY) { lastY = window.scrollY; spy(); }
+        requestAnimationFrame(frame);
+    })();
+})();
+</script>

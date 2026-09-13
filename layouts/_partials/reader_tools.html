@@ -1,0 +1,237 @@
+{{- /* Reader experience: restore saved settings before first paint. */ -}}
+<script>
+(function () {
+    try {
+        var r = document.documentElement, s = localStorage;
+        var fs = s.getItem('reader_fs');
+        if (fs) r.style.setProperty('--reader-font-size', fs + 'px');
+        var lh = s.getItem('reader_lh');
+        if (lh) r.style.setProperty('--reader-line-height', lh);
+        var f = s.getItem('reader_font');
+        if (f) r.style.setProperty('--reader-font', f === 'sans' ? 'var(--font-sans)' : 'var(--font-serif)');
+        var w = s.getItem('reader_w');
+        if (w) r.style.setProperty('--reader-measure', w);
+        if (s.getItem('reader_indent') === '1') r.setAttribute('data-reader-indent', 'on');
+        if (s.getItem('reader_theme') === 'sepia') r.setAttribute('data-reader-theme', 'sepia');
+    } catch (e) { }
+})();
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var article = document.querySelector('.post-single');
+    if (!article || document.getElementById('pwGate')) return;
+
+    var root = document.documentElement;
+    var LS = window.localStorage;
+    var DEFAULTS = { fs: 18, lh: 1.9, font: 'serif', w: '860px', indent: '0' };
+    var state = {
+        fs: parseInt(LS.getItem('reader_fs') || DEFAULTS.fs, 10),
+        lh: parseFloat(LS.getItem('reader_lh') || DEFAULTS.lh),
+        font: LS.getItem('reader_font') || DEFAULTS.font,
+        w: LS.getItem('reader_w') || DEFAULTS.w,
+        indent: LS.getItem('reader_indent') || DEFAULTS.indent,
+        theme: LS.getItem('reader_theme') || ''
+    };
+    if (state.theme !== 'sepia') {
+        state.theme = root.dataset.theme === 'dark' ? 'dark' : 'light';
+    }
+
+    function row(label, control) {
+        return '<div class="reader-row"><span class="reader-label">' + label + '</span>' + control + '</div>';
+    }
+    function seg(key, opts) {
+        var html = '<div class="reader-seg" data-seg="' + key + '">';
+        opts.forEach(function (o) {
+            html += '<button type="button" data-seg-key="' + key + '" data-seg-val="' + o[0] + '">' + o[1] + '</button>';
+        });
+        return html + '</div>';
+    }
+    function step(key) {
+        return '<div class="reader-step"><button type="button" data-step="' + key + '-">&minus;</button>' +
+            '<span class="reader-val" data-val="' + key + '"></span>' +
+            '<button type="button" data-step="' + key + '+">+</button></div>';
+    }
+
+    /* ---- reading progress bar ---- */
+    var bar = document.createElement('div');
+    bar.className = 'reader-progress';
+    document.body.appendChild(bar);
+    function progress() {
+        var doc = document.documentElement;
+        var max = doc.scrollHeight - doc.clientHeight;
+        var p = max > 0 ? doc.scrollTop / max : 0;
+        bar.style.transform = 'scaleX(' + Math.min(1, Math.max(0, p)) + ')';
+    }
+    window.addEventListener('scroll', progress, { passive: true });
+    window.addEventListener('resize', progress);
+    progress();
+
+    /* ---- settings panel ---- */
+    var fab = document.createElement('button');
+    fab.type = 'button';
+    fab.className = 'reader-fab';
+    fab.title = '阅读设置';
+    fab.setAttribute('aria-label', '阅读设置');
+    fab.textContent = 'Aa';
+
+    var panel = document.createElement('div');
+    panel.className = 'reader-panel';
+    panel.innerHTML =
+        row('字号', step('fs')) +
+        row('行距', step('lh')) +
+        row('字体', seg('font', [['serif', '宋体'], ['sans', '黑体']])) +
+        row('宽度', seg('w', [['720px', '窄'], ['860px', '中'], ['980px', '宽']])) +
+        row('主题', seg('theme', [['light', '日间'], ['sepia', '护眼'], ['dark', '夜间']])) +
+        row('缩进', seg('indent', [['0', '关'], ['1', '开']])) +
+        '<button type="button" class="reader-reset">恢复默认</button>';
+
+    document.body.appendChild(fab);
+    document.body.appendChild(panel);
+
+    function syncUI() {
+        panel.querySelector('[data-val="fs"]').textContent = state.fs + 'px';
+        panel.querySelector('[data-val="lh"]').textContent = state.lh.toFixed(1);
+        ['font', 'w', 'theme', 'indent'].forEach(function (key) {
+            var group = panel.querySelector('[data-seg="' + key + '"]');
+            if (!group) return;
+            Array.prototype.forEach.call(group.children, function (b) {
+                b.classList.toggle('active', b.getAttribute('data-seg-val') === String(state[key]));
+            });
+        });
+    }
+
+    function apply() {
+        root.style.setProperty('--reader-font-size', state.fs + 'px');
+        root.style.setProperty('--reader-line-height', String(state.lh));
+        root.style.setProperty('--reader-font', state.font === 'sans' ? 'var(--font-sans)' : 'var(--font-serif)');
+        root.style.setProperty('--reader-measure', state.w);
+        if (state.indent === '1') root.setAttribute('data-reader-indent', 'on');
+        else root.removeAttribute('data-reader-indent');
+        LS.setItem('reader_fs', state.fs);
+        LS.setItem('reader_lh', state.lh);
+        LS.setItem('reader_font', state.font);
+        LS.setItem('reader_w', state.w);
+        LS.setItem('reader_indent', state.indent);
+        syncUI();
+    }
+
+    function applyTheme(value) {
+        state.theme = value;
+        if (value === 'sepia') {
+            /* Kindle-style dark-green eye care: a dark mode */
+            root.setAttribute('data-reader-theme', 'sepia');
+            root.dataset.theme = 'dark';
+            LS.setItem('pref-theme', 'dark');
+        } else {
+            root.removeAttribute('data-reader-theme');
+            root.dataset.theme = value;
+            LS.setItem('pref-theme', value);
+        }
+        LS.setItem('reader_theme', value);
+        syncUI();
+    }
+
+    panel.addEventListener('click', function (e) {
+        var t = e.target;
+        if (t.matches('[data-step]')) {
+            var act = t.getAttribute('data-step');
+            if (act.indexOf('fs') === 0) {
+                state.fs = Math.min(24, Math.max(15, state.fs + (act === 'fs+' ? 1 : -1)));
+            } else {
+                state.lh = Math.min(2.4, Math.max(1.5, Math.round((state.lh + (act === 'lh+' ? 0.1 : -0.1)) * 10) / 10));
+            }
+            apply();
+        } else if (t.matches('[data-seg-key]')) {
+            var key = t.getAttribute('data-seg-key');
+            var val = t.getAttribute('data-seg-val');
+            if (key === 'theme') applyTheme(val);
+            else { state[key] = val; apply(); }
+        } else if (t.classList.contains('reader-reset')) {
+            state.fs = DEFAULTS.fs;
+            state.lh = DEFAULTS.lh;
+            state.font = DEFAULTS.font;
+            state.w = DEFAULTS.w;
+            state.indent = DEFAULTS.indent;
+            apply();
+        }
+    });
+
+    function setOpen(open) {
+        panel.classList.toggle('open', open);
+        /* while the panel is open, hide the Aa trigger and the back-to-top
+           button so the floating controls never overlap */
+        fab.classList.toggle('hidden', open);
+        var tl = document.getElementById('top-link');
+        if (tl) {
+            if (open) {
+                tl.classList.add('hidden');
+            } else {
+                /* restore PaperMod's own scroll-dependent visibility */
+                tl.classList.toggle('hidden', window.scrollY < window.innerHeight);
+            }
+        }
+    }
+    fab.addEventListener('click', function (e) {
+        e.stopPropagation();
+        setOpen(!panel.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+        if (panel.classList.contains('open') && !panel.contains(e.target) && !fab.contains(e.target)) {
+            setOpen(false);
+        }
+    });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && panel.classList.contains('open')) setOpen(false);
+    });
+
+    /* Header sun/moon toggle takes back control from sepia */
+    var tt = document.getElementById('theme-toggle');
+    if (tt) {
+        tt.addEventListener('click', function () {
+            if (root.hasAttribute('data-reader-theme')) {
+                root.removeAttribute('data-reader-theme');
+                state.theme = root.dataset.theme === 'dark' ? 'dark' : 'light';
+                LS.setItem('reader_theme', state.theme);
+                syncUI();
+            }
+        });
+    }
+
+    apply();
+    if (state.theme === 'sepia') applyTheme('sepia');
+
+    /* ---- sidebar chapter scroll-spy ---- */
+    var links = Array.prototype.slice.call(document.querySelectorAll('.reader-toc a[href^="#"]'));
+    if (links.length) {
+        var targets = [];
+        var byId = {};
+        links.forEach(function (a) {
+            var id = decodeURIComponent(a.getAttribute('href').slice(1));
+            var el = document.getElementById(id);
+            if (el) {
+                byId[id] = a;
+                targets.push(el);
+            }
+        });
+function spy() {
+            if (!targets.length) return;
+            var pos = window.scrollY + 120;
+            var cur = null;
+            targets.forEach(function (el) {
+                if (el.getBoundingClientRect().top + window.scrollY <= pos) cur = byId[el.id];
+            });
+            links.forEach(function (a) { a.classList.toggle('active', a === cur); });
+        }
+        window.addEventListener('scroll', spy, { passive: true });
+        window.addEventListener('resize', spy);
+        spy();
+        /* rAF fallback: some environments swallow scroll events for
+           programmatic scrolling, so re-check the position each frame */
+        var lastY = -1;
+        (function frame() {
+            if (window.scrollY !== lastY) { lastY = window.scrollY; spy(); }
+            requestAnimationFrame(frame);
+        })();
+    }
+});
+</script>

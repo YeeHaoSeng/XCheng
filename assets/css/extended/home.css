@@ -1,0 +1,271 @@
+/* ==========================================================================
+   Homepage composition: centered serif hero, frosted "recent posts" panel,
+   bottom-right social chip, gentle entrance motion + mouse parallax.
+   Loads after background.css so its !important overrides win over the
+   homepage "all transparent / all white" universal rules.
+   ========================================================================== */
+
+/* ---- centered hero ---- */
+/* Same brand-word look as the reference blog's banner "YeeHaoSeng":
+   Playball (Google script font) in white with a soft drop shadow,
+   served via jsDelivr (Google Fonts is not reliably reachable from CN). */
+@font-face {
+    font-family: "Playball";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://cdn.jsdelivr.net/npm/@fontsource/playball@5/files/playball-latin-400-normal.woff2) format("woff2");
+}
+@font-face {
+    font-family: "Merriweather";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://cdn.jsdelivr.net/npm/@fontsource/merriweather@5/files/merriweather-latin-400-normal.woff2) format("woff2");
+}
+@font-face {
+    font-family: "Merriweather";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url(https://cdn.jsdelivr.net/npm/@fontsource/merriweather@5/files/merriweather-latin-700-normal.woff2) format("woff2");
+}
+
+.home-hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 46vh;
+    padding-top: 2vh;
+}
+
+.home-hero-title {
+    font-family: "Playball", "Merriweather", "Noto Serif SC", var(--font-serif);
+    font-size: clamp(3rem, 9vw, 5.2rem);
+    line-height: 1.15;
+    letter-spacing: 0;
+    margin: 0;
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    animation: home-rise 0.7s ease both;
+}
+
+/* the homepage universal rule forces 600; the webfont header should be 700 */
+.is-homepage .home-hero-title {
+    font-weight: 700 !important;
+}
+
+.home-hero-sub {
+    margin-top: 1rem;
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 0.04em;
+    animation: home-rise 0.7s 0.1s ease both;
+}
+
+@keyframes home-rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* ---- bottom-right social chip (keeps the previous placement) ---- */
+.profile.home-socials {
+    position: fixed;
+    right: 2rem;
+    bottom: 1.5rem;
+    min-height: 0;
+    z-index: 5;
+}
+.is-homepage .home-socials .social-icons a {
+    background: rgba(255, 255, 255, 0.75) !important;
+}
+
+/* ---- frosted recent-posts panel ---- */
+.is-homepage .home-posts {
+    max-width: 580px;
+    margin: 1rem auto 3rem;
+    padding: 1.6rem 1.6rem 1.4rem 2rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: 14px;
+    background-color: rgba(0, 0, 0, 0.35) !important;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 10px 34px rgba(0, 0, 0, 0.28);
+    animation: home-rise 0.7s 0.18s ease both;
+}
+
+.is-homepage .home-posts-title {
+    font-size: 0.82rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.72);
+    margin: 0 0 0.9rem;
+}
+
+.is-homepage .home-posts ul {
+    list-style: none;
+    margin: 0;
+    padding: 0 0.4rem 0 0;
+    overflow-y: auto;
+    max-height: 210px;
+    min-height: 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
+}
+
+.is-homepage .home-posts ul::-webkit-scrollbar {
+    width: 6px;
+}
+.is-homepage .home-posts ul::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 3px;
+}
+.is-homepage .home-posts ul::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.is-homepage .home-posts li + li {
+    margin-top: 0.72rem;
+}
+
+.is-homepage .home-posts li a {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+}
+
+.is-homepage .home-posts li a:hover {
+    border-bottom-color: rgba(255, 255, 255, 0.45);
+}
+
+.home-posts-date {
+    flex: 0 0 auto;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.home-posts-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.is-homepage .home-posts-more {
+    display: inline-block;
+    margin-top: 1.1rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid transparent;
+}
+
+.is-homepage .home-posts-more:hover {
+    color: #fff;
+    border-bottom-color: rgba(255, 255, 255, 0.45);
+}
+
+/* hero photo: GPU-ready for the parallax script */
+.is-homepage .home-bg img {
+    will-change: transform;
+}
+
+/* big translucent CSS circles: the reference's dominant "bubbles from the
+   bottom" layer, sitting below the fine canvas bubbles */
+.home-circles {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+}
+.home-circles i {
+    position: absolute;
+    bottom: -160px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    animation: home-circle-rise linear infinite;
+    will-change: transform;
+}
+.home-circles.off {
+    display: none;
+}
+@keyframes home-circle-rise {
+    0%   { transform: translateY(0); opacity: 0; }
+    6%   { opacity: var(--ci-op, 0.5); }
+    85%  { opacity: var(--ci-op, 0.5); }
+    100% { transform: translateY(-130vh); opacity: 0; }
+}
+
+/* homepage settings: reuse the reader FAB/panel classes, stacked above the
+   GitHub chip (bottom 1.5rem) in the same corner language as article pages */
+.reader-fab.home-tools-fab {
+    bottom: 5rem;
+}
+.reader-panel.home-tools-panel {
+    bottom: 8rem;
+}
+/* the homepage "all transparent" rule must not strip panel surfaces */
+.is-homepage .reader-fab {
+    background-color: var(--tertiary) !important;
+}
+.is-homepage .reader-panel {
+    background-color: var(--theme) !important;
+}
+
+@media screen and (max-width: 768px) {
+    .reader-fab.home-tools-fab {
+        right: 1rem;
+        bottom: 4.2rem;
+    }
+    .reader-panel.home-tools-panel {
+        right: 1rem;
+        left: 1rem;
+        bottom: 7.4rem;
+        width: auto;
+    }
+}
+
+/* rising bubble canvas: above the photo, below the content */
+.home-bubbles {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .home-bubbles,
+    .home-circles {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .home-hero-title,
+    .home-hero-sub,
+    .is-homepage .home-posts {
+        animation: none;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .home-hero {
+        min-height: 40vh;
+    }
+    .is-homepage .home-posts {
+        width: 100%;
+        padding: 1.3rem 1.4rem;
+    }
+    .profile.home-socials {
+        right: 1rem;
+        bottom: 1rem;
+    }
+}

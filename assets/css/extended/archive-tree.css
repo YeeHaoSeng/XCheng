@@ -1,0 +1,85 @@
+/* ==========================================================================
+   Archive tree — fixed left year/month/post navigation (wide screens only)
+   Same visual language as the article reader sidebar, mirrored to the left.
+   ========================================================================== */
+
+.archive-tree {
+    display: none;
+    position: fixed;
+    top: calc(var(--header-height) + 1.5rem);
+    left: max(2rem, calc(50% - 730px));
+    width: 220px;
+    max-height: calc(100vh - var(--header-height) - 5rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    z-index: 10;
+}
+
+@media (min-width: 1440px) {
+    .archive-tree {
+        display: block;
+    }
+}
+
+.archive-tree-head {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: var(--secondary);
+    margin-bottom: 0.6rem;
+    padding-left: 0.7rem;
+}
+
+.archive-tree-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.archive-tree-nav > nav > ul > li > ul {
+    padding-inline-start: 0.8rem;
+}
+
+.archive-tree-nav li {
+    margin: 0.08rem 0;
+}
+
+.archive-tree-nav a {
+    display: block;
+    padding: 0.24rem 0.6rem;
+    font-size: 13.5px;
+    line-height: 1.4;
+    color: var(--secondary);
+    border-inline-start: 2px solid transparent;
+    border-radius: 0 4px 4px 0;
+}
+
+.archive-tree-nav a:hover {
+    color: var(--primary);
+    background: var(--code-bg);
+}
+
+.archive-tree-nav a.active {
+    color: var(--primary);
+    font-weight: 600;
+    border-inline-start-color: var(--primary);
+    background: var(--code-bg);
+}
+
+.archive-tree-nav .archive-tree-year-link {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.archive-tree-nav sup {
+    margin-inline-start: 0.35em;
+    font-size: 11px;
+    color: var(--tertiary);
+    font-weight: 400;
+}
+
+/* anchor targets keep clear of the top when jumped to */
+.archive-year-header,
+.archive-month-header {
+    scroll-margin-top: 1.5rem;
+}
