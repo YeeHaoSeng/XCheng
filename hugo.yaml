@@ -46,7 +46,7 @@ params:
     imageTitle: ""
   socialIcons:
     - name: github
-      url: "https://github.com/"
+      url: "https://github.com/YeeHaoSeng/XCheng"
   defaultTheme: auto
   editPost:
     URL: "https://github.com/YeeHaoSeng/XCheng/edit/master/content"
