@@ -1,11 +1,22 @@
-{{- /* Cusdis comments: hosted, guest commenters, no login needed.
-       Hidden until params.cusdis.appid is configured. */ -}}
-{{- if and site.Params.comments site.Params.cusdis.appid }}
-<div id="cusdis_thread"
-     data-host="https://cusdis.com"
-     data-app-id="{{ site.Params.cusdis.appid }}"
-     data-page-id="{{ .Permalink }}"
-     data-page-url="{{ .Permalink }}"
-     data-page-title="{{ .Title }}"></div>
-<script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
+{{- /* Waline comments: guest-comment support, no login required.
+       Hidden until params.waline.serverURL is configured. */ -}}
+{{- if and site.Params.comments site.Params.waline.serverURL }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.css">
+<div id="waline"></div>
+<script>
+(function () {
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.js';
+    s.onload = function () {
+        if (!window.Waline) return;
+        Waline.init({
+            el: '#waline',
+            serverURL: '{{ site.Params.waline.serverURL }}',
+            dark: 'html[data-theme="dark"]', /* covers the dark-green eye-care mode too */
+            lang: 'zh-CN'
+        });
+    };
+    document.head.appendChild(s);
+})();
+</script>
 {{- end }}

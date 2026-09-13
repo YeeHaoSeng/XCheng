@@ -54,8 +54,8 @@ params:
   privateTags:
     private: "hugoxc"
   comments: true
-  cusdis:
-    appid: ""   # 在 cusdis.com 注册建站后填入 App ID；留空则评论框不显示
+  waline:
+    serverURL: ""   # 部署 Waline 后填入，如 "https://xxx.vercel.app"；留空则评论框不显示
   ShowReadingTime: true
   ShowWordCount: true
   ShowBreadCrumbs: true
