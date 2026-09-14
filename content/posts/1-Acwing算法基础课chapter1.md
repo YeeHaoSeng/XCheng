@@ -1,7 +1,5 @@
 ---
 title: Acwing 算法基础课 chapter 1  
-cover:
-  image: /img/acwing.png  
 date: 2021-10-17T18:24:28+08:00
 lastmod: 2026-07-31T00:00:00+08:00
 draft: false
