@@ -31,9 +31,26 @@
 
 .archive-posts .archive-entry {
     position: relative;
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
     padding-left: 1.6rem;
     margin-bottom: 0.55rem;
     transition: background-color 0.2s ease;
+}
+
+/* date column: month-day as the rail-side tick (year already in the node) */
+.archive-entry-date {
+    flex: 0 0 3.2em;
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--secondary);
+    text-align: right;
+}
+
+.archive-entry-body {
+    flex: 1;
+    min-width: 0;
 }
 
 /* node dot */
@@ -126,6 +143,14 @@
 @media screen and (max-width: 768px) {
     .archive-posts .archive-entry {
         padding-left: 1.35rem;
+        flex-direction: column;
+        gap: 0.1rem;
+        align-items: stretch;
+    }
+    .archive-entry-date {
+        flex: none;
+        text-align: left;
+        font-size: 0.75rem;
     }
     .archive-month-header {
         padding-left: 1.35rem;
