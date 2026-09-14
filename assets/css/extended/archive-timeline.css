@@ -1,0 +1,72 @@
+/* ==========================================================================
+   Archive timeline: article entries become a vertical timeline with
+   node dots and a connecting rail. Group headers (year/month), the stats
+   bar and the left tree sidebar are untouched.
+   ========================================================================== */
+
+.archive-posts {
+    position: relative;
+    padding-left: 0;
+}
+
+/* vertical rail, aligned to the node dot centers */
+.archive-posts::before {
+    content: "";
+    position: absolute;
+    left: calc(0.343rem - 1px);
+    top: 0.55em;
+    bottom: 0.55em;
+    width: 2px;
+    background: var(--border);
+    border-radius: 2px;
+}
+
+.archive-posts .archive-entry {
+    position: relative;
+    padding-left: 1.6rem;
+    margin-bottom: 0.55rem;
+    transition: background-color 0.2s ease;
+}
+
+/* node dot */
+.archive-posts .archive-entry::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 0.6875rem;
+    height: 0.6875rem;
+    border-radius: 50%;
+    background: var(--theme);
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 0 3px var(--code-bg);
+    z-index: 1;
+}
+
+.archive-posts .archive-entry:hover::before {
+    background: var(--primary);
+}
+
+.archive-posts .archive-entry:hover {
+    background: var(--code-bg);
+    border-radius: 6px;
+}
+
+/* keep the meta line subtle inside the timeline */
+.archive-posts .archive-entry .archive-meta {
+    opacity: 0.85;
+}
+
+/* month/year headers keep their original look, just tuck in */
+.archive-year .archive-month {
+    margin-top: 0.4rem;
+}
+
+@media screen and (max-width: 768px) {
+    .archive-posts .archive-entry {
+        padding-left: 1.35rem;
+    }
+    .archive-posts::before {
+        left: calc(0.343rem - 1px);
+    }
+}
