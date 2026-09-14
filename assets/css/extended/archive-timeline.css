@@ -8,7 +8,8 @@
     position: relative;
 }
 
-/* per-year continuous rail: runs from below the year node to the year end */
+/* per-year continuous rail: runs from below the year node to the year end,
+   fades out at the bottom so the line never looks cut off */
 .archive-year::before {
     content: "";
     position: absolute;
@@ -16,8 +17,11 @@
     top: 3.1rem;
     bottom: 0.4rem;
     width: 2px;
-    background: var(--border);
     border-radius: 2px;
+    background: linear-gradient(
+        var(--border),
+        color-mix(in srgb, var(--border) 55%, transparent)
+    );
 }
 
 /* the old per-month rails are dropped so the year rail is continuous */
@@ -44,11 +48,15 @@
     background: var(--theme);
     border: 2px solid var(--primary);
     box-shadow: 0 0 0 3px var(--code-bg);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     z-index: 1;
 }
 
 .archive-posts .archive-entry:hover::before {
     background: var(--primary);
+    transform: scale(1.45);
+    box-shadow: 0 0 0 3px var(--code-bg),
+        0 0 0 8px color-mix(in srgb, var(--primary) 18%, transparent);
 }
 
 .archive-posts .archive-entry:hover {
@@ -56,9 +64,16 @@
     border-radius: 6px;
 }
 
-/* keep the meta line subtle inside the timeline */
-.archive-posts .archive-entry .archive-meta {
-    opacity: 0.85;
+/* two-line reading: title weight up, meta as the lighter second line */
+.archive-posts .archive-entry-title {
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+.archive-posts .archive-meta {
+    margin-top: 0.15rem;
+    opacity: 0.8;
+    font-size: 0.8rem;
 }
 
 /* year node: a large dot on the rail with the year number inside */
