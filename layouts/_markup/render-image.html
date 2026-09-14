@@ -1,0 +1,27 @@
+{{- /* Image render hook: PaperMod's default plus subpath-safe rewriting
+       for site-root absolute paths like /img/... under a baseURL path. */ -}}
+{{- $u := urls.Parse .Destination -}}
+{{- $src := $u.String -}}
+{{- if not $u.IsAbs -}}
+  {{- $path := strings.TrimPrefix "./" $u.Path }}
+  {{- with or (.PageInner.Resources.Get $path) (resources.Get $path) -}}
+    {{- $src = .RelPermalink -}}
+  {{- end -}}
+  {{- if and (strings.HasPrefix $src "/") (not (strings.HasPrefix $src "//")) -}}
+    {{- $src = printf "%s%s" (site.BaseURL | strings.TrimSuffix "/") $src -}}
+  {{- end -}}
+  {{- with $u.RawQuery -}}
+    {{- $src = printf "%s?%s" $src . -}}
+  {{- end -}}
+  {{- with $u.Fragment -}}
+    {{- $src = printf "%s#%s" $src . -}}
+  {{- end -}}
+{{- end -}}
+{{- $attributes := merge .Attributes (dict "alt" .Text "src" $src "title" (.Title | transform.HTMLEscape) "loading" "lazy") -}}
+<img
+  {{- range $k, $v := $attributes -}}
+    {{- if $v -}}
+      {{- printf " %s=%q" $k $v | safeHTMLAttr -}}
+    {{- end -}}
+  {{- end -}}>
+{{- /**/ -}}
