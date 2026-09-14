@@ -98,6 +98,11 @@
     transform: translateY(-50%) scale(1);
 }
 
+/* month headers keep their look but clear the rail (same indent as entries) */
+.archive-month-header {
+    padding-left: 1.6rem;
+}
+
 /* month/year headers keep their original look, just tuck in */
 .archive-year .archive-month {
     margin-top: 0.4rem;
@@ -105,6 +110,9 @@
 
 @media screen and (max-width: 768px) {
     .archive-posts .archive-entry {
+        padding-left: 1.35rem;
+    }
+    .archive-month-header {
         padding-left: 1.35rem;
     }
     .archive-year-header {
