@@ -105,3 +105,20 @@ document.addEventListener('DOMContentLoaded', function() {
 {{- if and (eq .Kind "page") (ne .Layout "archives") (ne .Layout "search") (not (partial "priv_pw.html" .)) }}
 {{- partial "reader_tools.html" . }}
 {{- end }}
+<script>
+/* archive timeline: light the year node up when it scrolls into view */
+document.addEventListener('DOMContentLoaded', function () {
+    var years = document.querySelectorAll('.archive-year');
+    if (!years.length) return;
+    if (!('IntersectionObserver' in window)) {
+        years.forEach(function (y) { y.classList.add('tl-on'); });
+        return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('tl-on'); io.unobserve(e.target); }
+        });
+    }, { threshold: 0.15 });
+    years.forEach(function (y) { io.observe(y); });
+});
+</script>

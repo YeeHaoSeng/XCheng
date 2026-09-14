@@ -4,21 +4,25 @@
    bar and the left tree sidebar are untouched.
    ========================================================================== */
 
-.archive-posts {
+.archive-year {
     position: relative;
-    padding-left: 0;
 }
 
-/* vertical rail, aligned to the node dot centers */
-.archive-posts::before {
+/* per-year continuous rail: runs from below the year node to the year end */
+.archive-year::before {
     content: "";
     position: absolute;
     left: calc(0.343rem - 1px);
-    top: 0.55em;
-    bottom: 0.55em;
+    top: 3.1rem;
+    bottom: 0.4rem;
     width: 2px;
     background: var(--border);
     border-radius: 2px;
+}
+
+/* the old per-month rails are dropped so the year rail is continuous */
+.archive-posts::before {
+    display: none;
 }
 
 .archive-posts .archive-entry {
@@ -57,6 +61,43 @@
     opacity: 0.85;
 }
 
+/* year node: a large dot on the rail with the year number inside */
+.archive-year-header {
+    position: relative;
+    padding-left: 2.9rem;
+    min-height: 2.6rem;
+}
+
+.archive-year-header::before {
+    content: attr(data-year);
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%) scale(0.5);
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--primary);
+    background: var(--theme);
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 0 4px var(--code-bg);
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    z-index: 1;
+}
+
+/* light-up when the year block scrolls into view */
+.archive-year.tl-on .archive-year-header::before {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+}
+
 /* month/year headers keep their original look, just tuck in */
 .archive-year .archive-month {
     margin-top: 0.4rem;
@@ -66,7 +107,13 @@
     .archive-posts .archive-entry {
         padding-left: 1.35rem;
     }
-    .archive-posts::before {
-        left: calc(0.343rem - 1px);
+    .archive-year-header {
+        padding-left: 2.5rem;
+        min-height: 2.2rem;
+    }
+    .archive-year-header::before {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.72rem;
     }
 }
