@@ -1,0 +1,7 @@
+{{- /* Bare <img> shortcode that is safe under a baseURL subpath.
+       Usage: {{< img src="/img/a.jpg" alt="说明" class="xxx" >}} */ -}}
+{{- $src := .Get "src" -}}
+{{- if and (strings.HasPrefix $src "/") (not (strings.HasPrefix $src "//")) -}}
+  {{- $src = printf "%s%s" (site.BaseURL | strings.TrimSuffix "/") $src -}}
+{{- end -}}
+<img src="{{ $src }}" alt="{{ .Get "alt" | default "" }}"{{ with .Get "class" }} class="{{ . }}"{{ end }} loading="lazy">
