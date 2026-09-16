@@ -15,3 +15,5 @@ Thumbs.db
 
 # Local private dev manual (contains credentials — never commit)
 /Dev_manual.md
+# Local site notes (kept local, not pushed)
+/Record.md
