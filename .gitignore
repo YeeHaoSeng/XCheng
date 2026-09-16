@@ -12,3 +12,7 @@ Thumbs.db
 # Editor
 .idea/
 .vscode/
+
+# Local private ops manual (contains credentials — never commit)
+/ReadMe.md
+/README.local.md
