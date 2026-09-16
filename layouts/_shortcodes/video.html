@@ -1,0 +1,22 @@
+{{- /* Video shortcode: external HTTPS sources (self-hosted board / OSS / CDN)
+       or site paths. Unlike PaperMod's own video shortcode this one is not
+       forced-muted.
+       Usage:
+         {{< video src="https://video.example.com/a.mp4" >}}
+         {{< video src="https://…/a.mp4" poster="/img/cover.jpg" muted="true" loop="true" >}}
+         {{< video src="/video/a.mp4" width="720" >}}                                  */ -}}
+{{- $src := .Get "src" -}}
+{{- if and (strings.HasPrefix $src "/") (not (strings.HasPrefix $src "//")) -}}
+  {{- $src = printf "%s%s" (site.BaseURL | strings.TrimSuffix "/") $src -}}
+{{- end -}}
+{{- $poster := .Get "poster" | default "" -}}
+{{- if and $poster (strings.HasPrefix $poster "/") (not (strings.HasPrefix $poster "//")) -}}
+  {{- $poster = printf "%s%s" (site.BaseURL | strings.TrimSuffix "/") $poster -}}
+{{- end -}}
+{{- $attrs := slice (printf `controls preload="metadata" src="%s"` $src) -}}
+{{- if $poster }}{{ $attrs = $attrs | append (printf `poster="%s"` $poster) }}{{ end -}}
+{{- if eq (.Get "muted") "true" }}{{ $attrs = $attrs | append "muted" }}{{ end -}}
+{{- if eq (.Get "loop") "true" }}{{ $attrs = $attrs | append "loop" }}{{ end -}}
+{{- if eq (.Get "autoplay") "true" }}{{ $attrs = $attrs | append "autoplay" }}{{ end -}}
+{{- with .Get "width" }}{{ $attrs = $attrs | append (printf `width="%s"` .) }}{{ end -}}
+<video {{ delimit $attrs " " | safeHTMLAttr }}></video>
