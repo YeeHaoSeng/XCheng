@@ -41,12 +41,28 @@ OSS 需要在控制台开"公开读"（或生成带签名的临时 URL）；OneD
 [📦 百度网盘查看/下载示例](https://pan.baidu.com/s/示例链接)
 ```
 
+## 方式四：自建视频服务器（家里的板子 + Tailscale Funnel）
+
+大视频塞 GitHub 会撞 100MB 单文件上限、仓库也会膨胀。更合适的做法：把视频放在家里的板子（1T NVMe）上，用 Tailscale Funnel 暴露成 HTTPS 直链，网页直接播：
+
+<video controls preload="metadata" src="https://lubanmao-video.tailb1cb86.ts.net/test.mp4"></video>
+
+```markdown
+{{< video src="https://lubanmao-video.tailb1cb86.ts.net/你的视频.mp4" >}}
+```
+
+- 视频文件放到板子 `/srv/video/` 即可（支持拖动进度、跨域播放）；
+- 域名固定、重启不变，也不用买域名/备案；板子需保持在线；
+- 代价：带宽不保证（Tailscale 免费档属于公平使用），适合个人规模、不追求速度的场景；
+- 文件名建议用英文/数字，中文名虽然能播但链接会被百分号编码得很难看。
+
 ## 速查表
 
 | 方式 | 页面内直接播放 | 需要什么 | 适合 |
 |---|---|---|---|
 | 本站仓库 mp4 | ✅ | 压到 ≤20MB | 短片、封面演示 |
-| OSS / OneDrive 直链 | ✅ | 公开读或签名 URL | 中长片 |
+| 自建板子（Tailscale Funnel） | ✅ | 板子在线 | 大文件、不追求速度 |
+| OSS / OneDrive 直链 | ✅ | 公开读或签名 URL | 中长片、追求速度 |
 | 网盘分享 | ❌ 只能点链接 | 登录账号 | 大文件下载 |
 | B 站 | iframe 可嵌 | 视频页嵌入代码 | 长视频、带弹幕 |
 
