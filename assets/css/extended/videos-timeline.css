@@ -1,0 +1,149 @@
+/* ==========================================================================
+   Videos page timeline: centered symmetric rail with alternating
+   left/right entries (classic NexT/Butterfly style).
+   ========================================================================== */
+
+.tl-center {
+    position: relative;
+    max-width: 860px;
+    margin: 2rem auto 3rem;
+    padding-left: 0;
+}
+
+/* central rail */
+.tl-center::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    transform: translateX(-50%);
+    background: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--border) 30%, transparent),
+        var(--border) 8%,
+        var(--border) 92%,
+        color-mix(in srgb, var(--border) 30%, transparent)
+    );
+    border-radius: 2px;
+}
+
+/* year badge on the rail */
+.tl-year {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    margin: 0 0 1.4rem;
+}
+.tl-year span {
+    display: inline-block;
+    padding: 0.3rem 1.1rem;
+    border-radius: 999px;
+    background: var(--theme);
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    box-shadow: 0 0 0 4px var(--code-bg);
+}
+
+/* entries alternate left / right of the rail */
+.tl-item {
+    position: relative;
+    width: 50%;
+    margin-bottom: 1.6rem;
+    padding: 0.35rem 0;
+    transition: background-color 0.2s ease;
+    border-radius: 8px;
+}
+.tl-item.tl-left {
+    left: 0;
+    padding-right: 2rem;
+    text-align: right;
+}
+.tl-item.tl-right {
+    left: 50%;
+    padding-left: 2rem;
+    text-align: left;
+}
+
+/* node dot on the rail */
+.tl-item::before {
+    content: "";
+    position: absolute;
+    top: 0.7em;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: var(--theme);
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 0 3px var(--code-bg);
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    z-index: 1;
+}
+.tl-item.tl-left::before {
+    right: calc(-0.35rem - 1px);
+}
+.tl-item.tl-right::before {
+    left: calc(-0.35rem - 1px);
+}
+
+.tl-item:hover::before {
+    background: var(--primary);
+    transform: scale(1.4);
+    box-shadow: 0 0 0 3px var(--code-bg),
+        0 0 0 8px color-mix(in srgb, var(--primary) 18%, transparent);
+}
+.tl-item:hover {
+    background: var(--code-bg);
+}
+
+.tl-date {
+    font-size: 0.8rem;
+    color: var(--secondary);
+    font-variant-numeric: tabular-nums;
+}
+.tl-title {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--primary);
+}
+.tl-title:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+}
+.tl-meta {
+    font-size: 0.8rem;
+    color: var(--secondary);
+    margin-top: 0.15rem;
+}
+
+@media screen and (max-width: 768px) {
+    .tl-center::before {
+        left: 6px;
+        transform: none;
+    }
+    .tl-item,
+    .tl-item.tl-left,
+    .tl-item.tl-right {
+        width: 100%;
+        left: 0;
+        padding-left: 1.6rem;
+        padding-right: 0.4rem;
+        text-align: left;
+    }
+    .tl-item.tl-left::before,
+    .tl-item.tl-right::before {
+        left: -0.32rem;
+        right: auto;
+    }
+    .tl-year {
+        justify-content: flex-start;
+        padding-left: 0;
+    }
+}
