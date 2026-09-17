@@ -11,10 +11,9 @@
   </div>
 </header>
 
-{{- $asc := $videos.Reverse }}
 {{- $prevYear := "" }}
 <div class="tl-center" id="tl-center">
-  {{- range $i, $e := $asc }}
+  {{- range $i, $e := $videos }}
   {{- $year := $e.Date.Format "2006" }}
   {{- if ne $year $prevYear }}
   <div class="tl-year" id="tl-{{ $year }}"><span>{{ $year }}</span></div>
