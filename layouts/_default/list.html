@@ -39,10 +39,12 @@
 {{- end }}
 
 {{- $pages := union .RegularPages .Sections }}
+{{- $hidden := site.Params.hiddenTags | default slice -}}{{- if $hidden -}}{{- $hp := where $pages "Params.tags" "intersect" $hidden -}}{{- $pages = $pages | complement $hp -}}{{- end -}}
 
 {{- if .IsHome }}
 {{- $pages = where site.RegularPages "Type" "in" site.Params.mainSections }}
 {{- $pages = where $pages "Params.hiddenInHomeList" "!=" "true"  }}
+{{- $hidden := site.Params.hiddenTags | default slice -}}{{- if $hidden -}}{{- $hp := where $pages "Params.tags" "intersect" $hidden -}}{{- $pages = $pages | complement $hp -}}{{- end -}}
 {{- end }}
 
 {{- $paginator := .Paginate $pages }}

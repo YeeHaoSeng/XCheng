@@ -57,6 +57,7 @@ params:
     appendFilePath: true
   privateTags:
     private: "hugoxc"
+  hiddenTags: ["测试"]   # 带这些标签的页面只从「标签分类页」可达，不进文章/归档/首页/搜索等聚合
   comments: true
   waline:
     serverURL: "https://vercelproj-xc-heng.vercel.app"

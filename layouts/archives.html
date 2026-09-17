@@ -1,6 +1,7 @@
 {{- define "main" }}
 
 {{- $treePages := where site.RegularPages "Type" "in" (slice "posts" "videos") }}
+{{- $hidden := site.Params.hiddenTags | default slice -}}{{- if $hidden -}}{{- $hp := where $treePages "Params.tags" "intersect" $hidden -}}{{- $treePages = $treePages | complement $hp -}}{{- end -}}
 {{- partial "archive_tree.html" (dict "pages" $treePages) }}
 
 <header class="page-header">
@@ -29,6 +30,7 @@
   </div>
   {{- end }}
   {{- $pages := where site.RegularPages "Type" "in" (slice "posts" "videos") }}
+  {{- $hidden := site.Params.hiddenTags | default slice -}}{{- if $hidden -}}{{- $hp := where $pages "Params.tags" "intersect" $hidden -}}{{- $pages = $pages | complement $hp -}}{{- end -}}
   {{- $total := len $pages }}
   {{- $words := 0 }}
   {{- range $pages }}{{ $words = add $words .WordCount }}{{ end }}
@@ -38,6 +40,7 @@
 </header>
 
 {{- $pages := where site.RegularPages "Type" "in" (slice "posts" "videos") }}
+{{- $hidden := site.Params.hiddenTags | default slice -}}{{- if $hidden -}}{{- $hp := where $pages "Params.tags" "intersect" $hidden -}}{{- $pages = $pages | complement $hp -}}{{- end -}}
 
 {{- if site.Params.ShowAllPagesInArchive }}
 {{- $pages = site.RegularPages }}

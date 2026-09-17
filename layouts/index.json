@@ -1,0 +1,9 @@
+{{- /* Search index: skip hidden-tagged pages (only reachable via their tag page) */ -}}
+{{- $hidden := site.Params.hiddenTags | default slice -}}
+{{- $.Scratch.Add "index" slice -}}
+{{- range site.RegularPages -}}
+    {{- if and (not .Params.searchHidden) (ne .Layout `archives`) (ne .Layout `search`) (not (intersect (.Params.tags | default slice) $hidden)) }}
+    {{- $.Scratch.Add "index" (dict "title" .Title "content" .Plain "permalink" .Permalink "summary" .Summary) -}}
+    {{- end }}
+{{- end -}}
+{{- $.Scratch.Get "index" | jsonify -}}

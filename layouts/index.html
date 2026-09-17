@@ -11,6 +11,7 @@
 </div>
 
 {{- $recent := where site.RegularPages "Type" "in" (site.Params.mainSections | default (slice "posts")) }}
+{{- $hidden := site.Params.hiddenTags | default slice -}}{{- if $hidden -}}{{- $hp := where $recent "Params.tags" "intersect" $hidden -}}{{- $recent = $recent | complement $hp -}}{{- end -}}
 {{- if gt (len $recent) 0 }}
 <section class="home-posts">
     <h2 class="home-posts-title">最近文章</h2>
