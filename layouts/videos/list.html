@@ -24,7 +24,7 @@
       <time class="archive-entry-date">{{ .Date.Format "01-02" }}</time>
       <div class="archive-entry-body">
         <h3 class="archive-entry-title">{{ .Title }}</h3>
-        <div class="archive-meta">{{ $m }}分{{ $s }}秒{{ with .Description }} · {{ . }}{{ end }}</div>
+        <div class="archive-meta">{{ $m }}分{{ $s }}秒</div>
       </div>
       <a class="entry-link" aria-label="video link to {{ .Title }}" href="{{ .Permalink }}"></a>
     </div>
