@@ -1,0 +1,37 @@
+{{- define "main" }}
+
+<header class="page-header">
+  <h1>{{ .Title }}</h1>
+  {{- $videos := .Pages }}
+  {{- $total := len $videos }}
+  {{- $minutes := 0 }}
+  {{- range $videos }}{{ $minutes = add $minutes (div (add .Params.duration 59) 60) }}{{ end }}
+  <div style="margin-top:0.3rem;color:var(--secondary);font-size:0.9em;">
+    {{ $total }} 个视频 · 共 {{ $minutes }} 分钟
+  </div>
+</header>
+
+{{- range $videos.GroupByDate "2006" }}
+{{- $year := replace .Key "0001" "" }}
+{{- if ne .Key "0001" }}
+<div class="archive-year tl-on">
+  <h2 class="archive-year-header" id="{{ $year }}" data-year="{{ $year }}">{{ $year }}<sup>&nbsp;{{ len .Pages }}</sup></h2>
+  <div class="archive-posts">
+    {{- range .Pages }}
+    {{- $sec := .Params.duration | default 0 }}
+    {{- $m := div $sec 60 }}{{ $s := mod $sec 60 }}
+    <div class="archive-entry">
+      <time class="archive-entry-date">{{ .Date.Format "01-02" }}</time>
+      <div class="archive-entry-body">
+        <h3 class="archive-entry-title">{{ .Title }}</h3>
+        <div class="archive-meta">{{ $m }}分{{ $s }}秒{{ with .Description }} · {{ . }}{{ end }}</div>
+      </div>
+      <a class="entry-link" aria-label="video link to {{ .Title }}" href="{{ .Permalink }}"></a>
+    </div>
+    {{- end }}
+  </div>
+</div>
+{{- end }}
+{{- end }}
+
+{{- end }}

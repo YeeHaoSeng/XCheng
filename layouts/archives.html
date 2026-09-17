@@ -1,6 +1,6 @@
 {{- define "main" }}
 
-{{- $treePages := where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{- $treePages := where site.RegularPages "Type" "in" (slice "posts" "videos") }}
 {{- partial "archive_tree.html" (dict "pages" $treePages) }}
 
 <header class="page-header">
@@ -28,7 +28,7 @@
     {{ .Description }}
   </div>
   {{- end }}
-  {{- $pages := where site.RegularPages "Type" "in" site.Params.mainSections }}
+  {{- $pages := where site.RegularPages "Type" "in" (slice "posts" "videos") }}
   {{- $total := len $pages }}
   {{- $words := 0 }}
   {{- range $pages }}{{ $words = add $words .WordCount }}{{ end }}
@@ -37,7 +37,7 @@
   </div>
 </header>
 
-{{- $pages := where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{- $pages := where site.RegularPages "Type" "in" (slice "posts" "videos") }}
 
 {{- if site.Params.ShowAllPagesInArchive }}
 {{- $pages = site.RegularPages }}
