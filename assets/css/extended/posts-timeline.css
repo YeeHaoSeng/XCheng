@@ -1,100 +1,93 @@
 /* ==========================================================================
-   Posts timeline (editorial style, like the reference layout):
-   left rail, solid year badges, entries with title (left) + date (right)
-   and a summary paragraph. Sections lists only (/posts/ etc.).
+   Posts timeline v2 (reference style):
+   year = bold heading on the left; each entry = date column (month/year)
+   | rail with solid dot | content column. Section lists only (/posts/).
    ========================================================================== */
 
 .pt-timeline {
     position: relative;
-    padding-left: 4.4rem;
-    margin: 1.6rem 0 2.4rem;
+    margin: 1rem 0 2.4rem;
 }
 
-/* rail */
-.pt-timeline::before {
-    content: "";
-    position: absolute;
-    left: 2rem;
-    top: 0.4rem;
-    bottom: 0.6rem;
-    width: 2px;
-    transform: translateX(-50%);
-    background: linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--border) 35%, transparent),
-        var(--border) 6%,
-        var(--border) 94%,
-        color-mix(in srgb, var(--border) 35%, transparent)
-    );
-    border-radius: 2px;
-}
-
-/* solid year badge on the rail */
+/* year: bold heading, left aligned */
 .pt-year {
-    position: relative;
-    margin: 1.6rem 0 1.1rem;
-    min-height: 3.1rem;
-}
-.pt-year:first-child {
-    margin-top: 0.2rem;
-}
-.pt-year span {
-    position: absolute;
-    left: calc(2rem - 1.55rem - 4.4rem);
-    top: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 3.1rem;
-    height: 3.1rem;
-    border-radius: 50%;
-    background: var(--primary);
-    color: var(--theme);
-    font-size: 0.95rem;
-    font-weight: 600;
+    margin: 1.9rem 0 0.7rem;
+    font-size: 1.4rem;
+    font-weight: 700;
     letter-spacing: 0.02em;
     font-variant-numeric: tabular-nums;
-    z-index: 1;
+}
+.pt-year:first-child {
+    margin-top: 0.4rem;
 }
 
-/* entry */
+/* entry: date | rail | content */
 .pt-item {
     position: relative;
-    padding: 0.55rem 0 1.15rem;
+    display: grid;
+    grid-template-columns: 5rem 2.2rem 1fr;
+    align-items: start;
+    padding: 0.45rem 0 1.15rem;
 }
+
+/* rail segment (continuous through the entry) */
 .pt-item::before {
     content: "";
     position: absolute;
-    left: calc(2rem - 0.375rem - 4.4rem);
-    top: 0.95em;
+    left: calc(5rem + 1.1rem - 1px);
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+}
+.pt-item:last-child::before {
+    background: linear-gradient(to bottom, var(--border), transparent);
+}
+
+/* solid dot on the rail */
+.pt-item::after {
+    content: "";
+    position: absolute;
+    left: calc(5rem + 1.1rem - 0.375rem);
+    top: 0.55em;
     width: 0.75rem;
     height: 0.75rem;
     border-radius: 50%;
-    background: var(--theme);
-    border: 2px solid var(--primary);
-    box-shadow: 0 0 0 3px var(--code-bg);
-    z-index: 1;
-    transition: transform 0.2s ease, background 0.2s ease;
-}
-.pt-item:hover::before {
     background: var(--primary);
+    box-shadow: 0 0 0 3px var(--theme);
+    transition: transform 0.2s ease;
+    z-index: 1;
+}
+.pt-item:hover::after {
     transform: scale(1.35);
 }
 
-.pt-head {
+/* date column: month over year, right aligned against the rail */
+.pt-date {
+    grid-column: 1;
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
+    flex-direction: column;
+    text-align: right;
+    padding-right: 0.95rem;
+    color: var(--secondary);
+    font-size: 0.8rem;
+    line-height: 1.35;
+    font-variant-numeric: tabular-nums;
 }
+.pt-date .pt-date-year {
+    opacity: 0.75;
+}
+
+.pt-body {
+    grid-column: 3;
+}
+
 .pt-title {
     margin: 0;
-    font-size: 1.12rem;
+    font-size: 1.08rem;
     line-height: 1.5;
-    font-family: var(--font-serif);
     font-weight: 600;
-    flex: 1;
-    min-width: 0;
+    font-family: var(--font-serif);
 }
 .pt-title > a {
     color: var(--primary);
@@ -104,51 +97,39 @@
     text-decoration-color: var(--tertiary);
     text-underline-offset: 0.25em;
 }
-.pt-date {
-    flex: 0 0 auto;
-    font-size: 0.82rem;
-    color: var(--secondary);
-    font-variant-numeric: tabular-nums;
-}
 
 .pt-summary {
-    margin: 0.5rem 0 0;
+    margin: 0.35rem 0 0;
     color: var(--secondary);
-    font-size: 0.94rem;
-    line-height: 1.7;
+    font-size: 0.92rem;
+    line-height: 1.65;
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
 }
 .pt-meta {
-    margin-top: 0.4rem;
-    font-size: 0.78rem;
+    margin-top: 0.3rem;
+    font-size: 0.76rem;
     color: var(--secondary);
-    opacity: 0.85;
+    opacity: 0.8;
 }
 
 @media screen and (max-width: 768px) {
-    .pt-timeline {
-        padding-left: 3.2rem;
-    }
-    .pt-timeline::before {
-        left: 1.2rem;
-    }
-    .pt-year span {
-        left: calc(1.2rem - 1.25rem - 3.2rem);
-        width: 2.5rem;
-        height: 2.5rem;
-        font-size: 0.82rem;
+    .pt-item {
+        grid-template-columns: 3.4rem 1.5rem 1fr;
     }
     .pt-item::before {
-        left: calc(1.2rem - 0.375rem - 3.2rem);
+        left: calc(3.4rem + 0.75rem - 1px);
     }
-    .pt-head {
-        flex-direction: column;
-        gap: 0.1rem;
+    .pt-item::after {
+        left: calc(3.4rem + 0.75rem - 0.34rem);
     }
-    .pt-title {
-        font-size: 1.05rem;
+    .pt-date {
+        padding-right: 0.6rem;
+        font-size: 0.72rem;
+    }
+    .pt-year {
+        font-size: 1.2rem;
     }
 }

@@ -58,19 +58,22 @@
   {{- range $paginator.Pages.GroupByPublishDate "2006" }}
   {{- $year := replace .Key "0001" "" }}
   {{- if ne .Key "0001" }}
-  <div class="pt-year"><span>{{ $year }}</span></div>
+  <h2 class="pt-year">{{ $year }}</h2>
   {{- range .Pages }}
   <article class="pt-item">
-    <div class="pt-head">
-      <h3 class="pt-title"><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
-      <time class="pt-date">{{ .Date.Format "2006-01-02" }}</time>
+    <div class="pt-date">
+      <span>{{ .Date.Format "January" }}</span>
+      <span class="pt-date-year">{{ .Date.Format "2006" }}</span>
     </div>
-    {{- if (ne (.Param "hideSummary") true) }}
-    <p class="pt-summary">{{ .Summary | plainify | htmlUnescape }}{{ if .Truncated }}…{{ end }}</p>
-    {{- end }}
-    {{- if not (.Param "hideMeta") }}
-    <div class="pt-meta">{{- partial "post_meta.html" . -}}</div>
-    {{- end }}
+    <div class="pt-body">
+      <h3 class="pt-title"><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+      {{- if (ne (.Param "hideSummary") true) }}
+      <p class="pt-summary">{{ .Summary | plainify | htmlUnescape }}{{ if .Truncated }}…{{ end }}</p>
+      {{- end }}
+      {{- if not (.Param "hideMeta") }}
+      <div class="pt-meta">{{- partial "post_meta.html" . -}}</div>
+      {{- end }}
+    </div>
   </article>
   {{- end }}
   {{- end }}
