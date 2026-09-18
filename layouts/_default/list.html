@@ -54,25 +54,28 @@
 {{- end }}
 
 {{- $term := .Data.Term }}
-{{- range $index, $page := $paginator.Pages }}
-
-<article class="pl-item">
-  <h2 class="pl-title">
-    <a href="{{ .Permalink }}">{{ .Title }}</a>
-    {{- if .Draft }}
-    <span class="entry-hint" title="Draft">[草稿]</span>
+<div class="pt-timeline">
+  {{- range $paginator.Pages.GroupByPublishDate "2006" }}
+  {{- $year := replace .Key "0001" "" }}
+  {{- if ne .Key "0001" }}
+  <div class="pt-year"><span>{{ $year }}</span></div>
+  {{- range .Pages }}
+  <article class="pt-item">
+    <div class="pt-head">
+      <h3 class="pt-title"><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+      <time class="pt-date">{{ .Date.Format "2006-01-02" }}</time>
+    </div>
+    {{- if (ne (.Param "hideSummary") true) }}
+    <p class="pt-summary">{{ .Summary | plainify | htmlUnescape }}{{ if .Truncated }}…{{ end }}</p>
     {{- end }}
-  </h2>
-  {{- if not (.Param "hideMeta") }}
-  <div class="pl-meta">
-    {{- partial "post_meta.html" . -}}
-  </div>
+    {{- if not (.Param "hideMeta") }}
+    <div class="pt-meta">{{- partial "post_meta.html" . -}}</div>
+    {{- end }}
+  </article>
   {{- end }}
-  {{- if (ne (.Param "hideSummary") true) }}
-  <p class="pl-summary">{{ .Summary | plainify | htmlUnescape }}{{ if .Truncated }}…{{ end }}</p>
   {{- end }}
-</article>
-{{- end }}
+  {{- end }}
+</div>
 
 {{- if gt $paginator.TotalPages 1 }}
 <footer class="page-footer">

@@ -1,0 +1,154 @@
+/* ==========================================================================
+   Posts timeline (editorial style, like the reference layout):
+   left rail, solid year badges, entries with title (left) + date (right)
+   and a summary paragraph. Sections lists only (/posts/ etc.).
+   ========================================================================== */
+
+.pt-timeline {
+    position: relative;
+    padding-left: 4.4rem;
+    margin: 1.6rem 0 2.4rem;
+}
+
+/* rail */
+.pt-timeline::before {
+    content: "";
+    position: absolute;
+    left: 2rem;
+    top: 0.4rem;
+    bottom: 0.6rem;
+    width: 2px;
+    transform: translateX(-50%);
+    background: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--border) 35%, transparent),
+        var(--border) 6%,
+        var(--border) 94%,
+        color-mix(in srgb, var(--border) 35%, transparent)
+    );
+    border-radius: 2px;
+}
+
+/* solid year badge on the rail */
+.pt-year {
+    position: relative;
+    margin: 1.6rem 0 1.1rem;
+    min-height: 3.1rem;
+}
+.pt-year:first-child {
+    margin-top: 0.2rem;
+}
+.pt-year span {
+    position: absolute;
+    left: calc(2rem - 1.55rem - 4.4rem);
+    top: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.1rem;
+    height: 3.1rem;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--theme);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+    z-index: 1;
+}
+
+/* entry */
+.pt-item {
+    position: relative;
+    padding: 0.55rem 0 1.15rem;
+}
+.pt-item::before {
+    content: "";
+    position: absolute;
+    left: calc(2rem - 0.375rem - 4.4rem);
+    top: 0.95em;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: var(--theme);
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 0 3px var(--code-bg);
+    z-index: 1;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+.pt-item:hover::before {
+    background: var(--primary);
+    transform: scale(1.35);
+}
+
+.pt-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.pt-title {
+    margin: 0;
+    font-size: 1.12rem;
+    line-height: 1.5;
+    font-family: var(--font-serif);
+    font-weight: 600;
+    flex: 1;
+    min-width: 0;
+}
+.pt-title > a {
+    color: var(--primary);
+}
+.pt-item:hover .pt-title > a {
+    text-decoration: underline;
+    text-decoration-color: var(--tertiary);
+    text-underline-offset: 0.25em;
+}
+.pt-date {
+    flex: 0 0 auto;
+    font-size: 0.82rem;
+    color: var(--secondary);
+    font-variant-numeric: tabular-nums;
+}
+
+.pt-summary {
+    margin: 0.5rem 0 0;
+    color: var(--secondary);
+    font-size: 0.94rem;
+    line-height: 1.7;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+.pt-meta {
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--secondary);
+    opacity: 0.85;
+}
+
+@media screen and (max-width: 768px) {
+    .pt-timeline {
+        padding-left: 3.2rem;
+    }
+    .pt-timeline::before {
+        left: 1.2rem;
+    }
+    .pt-year span {
+        left: calc(1.2rem - 1.25rem - 3.2rem);
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 0.82rem;
+    }
+    .pt-item::before {
+        left: calc(1.2rem - 0.375rem - 3.2rem);
+    }
+    .pt-head {
+        flex-direction: column;
+        gap: 0.1rem;
+    }
+    .pt-title {
+        font-size: 1.05rem;
+    }
+}
