@@ -421,3 +421,48 @@
         transition: none;
     }
 }
+
+/* ------------------------------------------------- inline private prompt */
+
+.reader-panel .priv-inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 0.7rem;
+    padding-top: 0.7rem;
+    border-top: 1px dashed var(--border);
+}
+
+.reader-panel .priv-inline input {
+    flex: 1 1 100%;
+    padding: 0.4em 0.6em;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--entry);
+    color: var(--primary);
+}
+
+.reader-panel .priv-inline button {
+    padding: 0.32em 0.85em;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--primary);
+    cursor: pointer;
+}
+
+.reader-panel .priv-inline button.priv-ok {
+    background: var(--primary);
+    color: var(--theme);
+    border-color: var(--primary);
+}
+
+.reader-panel .priv-inline .priv-err {
+    display: none;
+    flex: 1 1 100%;
+    color: #c00;
+    font-size: 12px;
+}

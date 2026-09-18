@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
         row('宽度', seg('w', [['720px', '窄'], ['860px', '中'], ['980px', '宽']])) +
         row('主题', seg('theme', [['light', '日间'], ['sepia', '护眼'], ['dark', '夜间']])) +
         row('缩进', seg('indent', [['0', '关'], ['1', '开']])) +
-        row('私密', seg('private', [['on', '开'], ['off', '关']])) +
+        row('私密', seg('private', [['on', '显示'], ['off', '隐藏']])) +
         '<button type="button" class="reader-reset">恢复默认</button>';
 
     document.body.appendChild(fab);
@@ -114,13 +114,31 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
     function setPrivate(on) {
-        if (!on) { LS.removeItem('reader_private'); syncPrivate(); return; }
+        if (!on) { LS.removeItem('reader_private'); removeInline(); syncPrivate(); return; }
         if (privOn()) { syncPrivate(); return; }
-        var v = window.prompt('请输入私密密码（输入一次后即可一键开关）');
-        if (v === null) { syncPrivate(); return; }
-        if (v === PRIV_PW) { LS.setItem('reader_private', '1'); }
-        else { window.alert('密码错误'); }
-        syncPrivate();
+        showInline();
+    }
+    function removeInline() {
+        var box = panel.querySelector('.priv-inline');
+        if (box) box.remove();
+    }
+    function showInline() {
+        if (panel.querySelector('.priv-inline')) return;
+        var box = document.createElement('div');
+        box.className = 'priv-inline';
+        box.innerHTML = '<input type="password" placeholder="私密密码">' +
+            '<button type="button" class="priv-ok">确定</button>' +
+            '<button type="button" class="priv-cancel">取消</button>' +
+            '<div class="priv-err">密码错误</div>';
+        panel.appendChild(box);
+        var input = box.querySelector('input');
+        input.focus();
+        box.querySelector('.priv-ok').onclick = function () {
+            if (input.value === PRIV_PW) { LS.setItem('reader_private', '1'); box.remove(); syncPrivate(); }
+            else { box.querySelector('.priv-err').style.display = 'block'; }
+        };
+        box.querySelector('.priv-cancel').onclick = function () { box.remove(); syncPrivate(); };
+        input.onkeydown = function (e) { if (e.key === 'Enter') box.querySelector('.priv-ok').click(); };
     }
 
     function apply() {
