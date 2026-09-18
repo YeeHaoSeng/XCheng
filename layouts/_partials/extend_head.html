@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {{- /* Reader experience: article pages only, skipped for protected posts */ -}}
-{{- if and (eq .Kind "page") (ne .Layout "archives") (ne .Layout "search") (not (partial "priv_pw.html" .)) }}
+{{- if and (eq .Kind "page") (ne .Layout "archives") (ne .Layout "search") (not (partial "is_private.html" .)) }}
 {{- partial "reader_tools.html" . }}
 {{- end }}
 <script>

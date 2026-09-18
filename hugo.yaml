@@ -55,8 +55,8 @@ params:
   editPost:
     URL: "https://github.com/YeeHaoSeng/XCheng/edit/master/content"
     appendFilePath: true
-  privateTags:
-    private: "hugoxc"
+  privateTags: ["private"]   # 带这些标签的文章需要密码（密码只以哈希形式出现）
+  privatePassword: "hugoxc"   # private 标签文章的密码（君子协定级别，静态站无法真正保密）
   hiddenTags: ["测试"]   # 带这些标签的页面只从「标签分类页」可达，不进文章/归档/首页/搜索等聚合
   comments: true
   waline:

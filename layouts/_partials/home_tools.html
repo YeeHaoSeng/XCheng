@@ -29,10 +29,24 @@ document.addEventListener('DOMContentLoaded', function () {
     panel.className = 'reader-panel home-tools-panel';
     panel.innerHTML =
         row('气泡', seg('bubble', [['refined', '精致'], ['original', '原味']])) +
-        row('主题', seg('theme', [['light', '日间'], ['sepia', '护眼'], ['dark', '夜间']]));
+        row('主题', seg('theme', [['light', '日间'], ['sepia', '护眼'], ['dark', '夜间']])) +
+        row('私密', seg('private', [['on', '开'], ['off', '关']]));
 
     document.body.appendChild(fab);
     document.body.appendChild(panel);
+
+    /* ---- private-content global switch (unlock once, toggle anytime) ---- */
+    var PRIV_PW = '{{ site.Params.privatePassword }}';
+    function privOn() { return LS.getItem('reader_private') === '1'; }
+    function setPrivate(on) {
+        if (!on) { LS.removeItem('reader_private'); sync(); return; }
+        if (privOn()) { sync(); return; }
+        var v = window.prompt('请输入私密密码（输入一次后即可一键开关）');
+        if (v === null) { sync(); return; }
+        if (v === PRIV_PW) { LS.setItem('reader_private', '1'); }
+        else { window.alert('密码错误'); }
+        sync();
+    }
 
     function sync() {
         var bubble = 'refined';
@@ -45,6 +59,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 b.classList.toggle('active', b.getAttribute('data-seg-val') === v);
             });
         });
+        var pg = panel.querySelector('[data-seg="private"]');
+        if (pg) {
+            var pv = privOn() ? 'on' : 'off';
+            Array.prototype.forEach.call(pg.children, function (b) {
+                b.classList.toggle('active', b.getAttribute('data-seg-val') === pv);
+            });
+        }
     }
 
     function applyTheme(value) {
@@ -70,6 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var key = t.getAttribute('data-seg-key');
         var val = t.getAttribute('data-seg-val');
         if (key === 'theme') { applyTheme(val); return; }
+        if (key === 'private') { setPrivate(val === 'on'); return; }
         try { LS.setItem('bubble_mode', val); } catch (err) { }
         if (window.__bubbleSetMode) window.__bubbleSetMode(val);
         sync();

@@ -1,0 +1,9 @@
+{{- /* Prints "1" when the page is protected (private tag or legacy password),
+       empty string otherwise. Used as a boolean-ish partial result. */ -}}
+{{- $protected := false -}}
+{{- $tagList := site.Params.privateTags | default slice -}}
+{{- range .Params.tags -}}
+{{- if in $tagList . }}{{ $protected = true }}{{ end -}}
+{{- end -}}
+{{- if and (not $protected) .Params.password }}{{ $protected = true }}{{ end -}}
+{{- if $protected }}1{{ end -}}

@@ -83,6 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
         row('宽度', seg('w', [['720px', '窄'], ['860px', '中'], ['980px', '宽']])) +
         row('主题', seg('theme', [['light', '日间'], ['sepia', '护眼'], ['dark', '夜间']])) +
         row('缩进', seg('indent', [['0', '关'], ['1', '开']])) +
+        row('私密', seg('private', [['on', '开'], ['off', '关']])) +
         '<button type="button" class="reader-reset">恢复默认</button>';
 
     document.body.appendChild(fab);
@@ -98,6 +99,28 @@ document.addEventListener('DOMContentLoaded', function () {
                 b.classList.toggle('active', b.getAttribute('data-seg-val') === String(state[key]));
             });
         });
+        syncPrivate();
+    }
+
+    /* ---- private-content global switch (unlock once, toggle anytime) ---- */
+    var PRIV_PW = '{{ site.Params.privatePassword }}';
+    function privOn() { return LS.getItem('reader_private') === '1'; }
+    function syncPrivate() {
+        var group = panel.querySelector('[data-seg="private"]');
+        if (!group) return;
+        var v = privOn() ? 'on' : 'off';
+        Array.prototype.forEach.call(group.children, function (b) {
+            b.classList.toggle('active', b.getAttribute('data-seg-val') === v);
+        });
+    }
+    function setPrivate(on) {
+        if (!on) { LS.removeItem('reader_private'); syncPrivate(); return; }
+        if (privOn()) { syncPrivate(); return; }
+        var v = window.prompt('请输入私密密码（输入一次后即可一键开关）');
+        if (v === null) { syncPrivate(); return; }
+        if (v === PRIV_PW) { LS.setItem('reader_private', '1'); }
+        else { window.alert('密码错误'); }
+        syncPrivate();
     }
 
     function apply() {
@@ -145,6 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var key = t.getAttribute('data-seg-key');
             var val = t.getAttribute('data-seg-val');
             if (key === 'theme') applyTheme(val);
+            else if (key === 'private') setPrivate(val === 'on');
             else { state[key] = val; apply(); }
         } else if (t.classList.contains('reader-reset')) {
             state.fs = DEFAULTS.fs;
