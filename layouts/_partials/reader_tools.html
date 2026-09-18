@@ -18,8 +18,8 @@
 </script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var article = document.querySelector('.post-single');
-    if (!article || document.getElementById('pwGate')) return;
+    /* Panel is available site-wide; article-only rows are gated by
+       IS_ARTICLE below, so no .post-single / pwGate guard here. */
 
     var root = document.documentElement;
     var LS = window.localStorage;
@@ -52,19 +52,24 @@ document.addEventListener('DOMContentLoaded', function () {
             '<button type="button" data-step="' + key + '+">+</button></div>';
     }
 
-    /* ---- reading progress bar ---- */
-    var bar = document.createElement('div');
-    bar.className = 'reader-progress';
-    document.body.appendChild(bar);
+    /* ---- reading progress bar (article pages only) ---- */
+    var isArticlePage = {{ if and (eq .Kind "page") (ne .Layout "archives") (ne .Layout "search") }}true{{ else }}false{{ end }};
+    var bar = null;
     function progress() {
+        if (!bar) return;
         var doc = document.documentElement;
         var max = doc.scrollHeight - doc.clientHeight;
         var p = max > 0 ? doc.scrollTop / max : 0;
         bar.style.transform = 'scaleX(' + Math.min(1, Math.max(0, p)) + ')';
     }
-    window.addEventListener('scroll', progress, { passive: true });
-    window.addEventListener('resize', progress);
-    progress();
+    if (isArticlePage) {
+        bar = document.createElement('div');
+        bar.className = 'reader-progress';
+        document.body.appendChild(bar);
+        window.addEventListener('scroll', progress, { passive: true });
+        window.addEventListener('resize', progress);
+        progress();
+    }
 
     /* ---- settings panel ---- */
     var fab = document.createElement('button');
@@ -76,22 +81,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var panel = document.createElement('div');
     panel.className = 'reader-panel';
-    panel.innerHTML =
-        row('字号', step('fs')) +
-        row('行距', step('lh')) +
-        row('字体', seg('font', [['serif', '宋体'], ['sans', '黑体']])) +
-        row('宽度', seg('w', [['720px', '窄'], ['860px', '中'], ['980px', '宽']])) +
-        row('主题', seg('theme', [['light', '日间'], ['sepia', '护眼'], ['dark', '夜间']])) +
-        row('缩进', seg('indent', [['0', '关'], ['1', '开']])) +
-        row('私密', seg('private', [['on', '显示'], ['off', '隐藏']])) +
-        '<button type="button" class="reader-reset">恢复默认</button>';
+    /* typography rows only make sense on an article body */
+    var IS_ARTICLE = {{ if and (eq .Kind "page") (ne .Layout "archives") (ne .Layout "search") (not (partial "is_private.html" .)) }}true{{ else }}false{{ end }};
+    var html = '';
+    if (IS_ARTICLE) {
+        html += row('字号', step('fs')) +
+            row('行距', step('lh')) +
+            row('字体', seg('font', [['serif', '宋体'], ['sans', '黑体']])) +
+            row('宽度', seg('w', [['720px', '窄'], ['860px', '中'], ['980px', '宽']]));
+    }
+    html += row('主题', seg('theme', [['light', '日间'], ['sepia', '护眼'], ['dark', '夜间']])) +
+        row('私密', seg('private', [['on', '显示'], ['off', '隐藏']]));
+    if (IS_ARTICLE) {
+        html += row('缩进', seg('indent', [['0', '关'], ['1', '开']])) +
+            '<button type="button" class="reader-reset">恢复默认</button>';
+    }
+    panel.innerHTML = html;
 
     document.body.appendChild(fab);
     document.body.appendChild(panel);
 
     function syncUI() {
-        panel.querySelector('[data-val="fs"]').textContent = state.fs + 'px';
-        panel.querySelector('[data-val="lh"]').textContent = state.lh.toFixed(1);
+        var fsEl = panel.querySelector('[data-val="fs"]');
+        if (fsEl) fsEl.textContent = state.fs + 'px';
+        var lhEl = panel.querySelector('[data-val="lh"]');
+        if (lhEl) lhEl.textContent = state.lh.toFixed(1);
         ['font', 'w', 'theme', 'indent'].forEach(function (key) {
             var group = panel.querySelector('[data-seg="' + key + '"]');
             if (!group) return;
@@ -142,6 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function apply() {
+        if (!IS_ARTICLE) { syncUI(); return; }
         root.style.setProperty('--reader-font-size', state.fs + 'px');
         root.style.setProperty('--reader-line-height', String(state.lh));
         root.style.setProperty('--reader-font', state.font === 'sans' ? 'var(--font-sans)' : 'var(--font-serif)');

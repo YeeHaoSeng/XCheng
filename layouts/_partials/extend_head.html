@@ -101,8 +101,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-{{- /* Reader experience: article pages only, skipped for protected posts */ -}}
-{{- if and (eq .Kind "page") (ne .Layout "archives") (ne .Layout "search") (not (partial "is_private.html" .)) }}
+{{- /* Settings FAB on every page except the homepage (which uses home_tools).
+       Typography rows render only on article pages (see reader_tools). */ -}}
+{{- if not .IsHome }}
 {{- partial "reader_tools.html" . }}
 {{- end }}
 <script>
